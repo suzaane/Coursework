@@ -1,0 +1,22 @@
+# Virtual environment - never upload this
+env/
+.env/
+venv/
+
+# Database - each person has their own local one
+db.sqlite3
+
+# Python cache files - not needed
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code settings
+.vscode/
+
+# Windows junk
+Thumbs.db
+Desktop.ini
+
+# Mac junk
+.DS_Store
