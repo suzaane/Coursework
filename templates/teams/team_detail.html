@@ -19,23 +19,58 @@
     <div class="row">
         <!-- Team Info Column -->
         <div class="col-md-8">
+            <!-- Team Information Card -->
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">Team Information</h5>
                 </div>
                 <div class="card-body">
                     <table class="table">
-                        <tr><th>Department:</th><td>{{ team.department|default:"-" }}</td></tr>
-                        <tr><th>Manager:</th><td>{{ team.manager.username|default:"-" }}</td></tr>
-                        <tr><th>Contact Email:</th><td>{{ team.contact_email }}</td></tr>
-                        <tr><th>Slack:</th><td>{{ team.contact_slack|default:"-" }}</td></tr>
-                        <tr><th>Repository:</th><td>{% if team.code_repository %}<a href="{{ team.code_repository }}" target="_blank">GitHub</a>{% else %}-{% endif %}</td></tr>
-                        <tr><th>Description:</th><td>{{ team.description|linebreaks }}</td></tr>
+                        <tr><th>Department:</th><td>{{ team.department|default:"-" }}</tr>
+                        <tr><th>Manager:</th><td>{{ team.manager.username|default:"-" }}</tr>
+                        <tr><th>Contact Email:</th><td>{{ team.contact_email }}</tr>
+                        <tr><th>Slack:</th><td>{{ team.contact_slack|default:"-" }}</tr>
+                        <tr><th>Repository:</th><td>{% if team.code_repository %}<a href="{{ team.code_repository }}" target="_blank">GitHub</a>{% else %}-{% endif %}</tr>
+                        <tr><th>Description:</th><td>{{ team.description|linebreaks }}</tr>
                     </table>
                 </div>
             </div>
             
-            <!-- SKILLS SECTION - NEW -->
+            <!-- Project Management -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-tasks"></i> Project Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Jira Project:</strong> {{ team.jira_project_name|default:"-" }}<br>
+                            <strong>Jira Board:</strong> 
+                            {% if team.jira_board_link %}
+                                <a href="{{ team.jira_board_link }}" target="_blank">Link</a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Workstream:</strong> {{ team.workstream|default:"-" }}<br>
+                            <strong>Agile Practice:</strong> {{ team.agile_practices|default:"-" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- NEW SECTION 2: Development Focus -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-bullseye"></i> Development Focus</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ team.development_focus|linebreaks|default:"No focus areas specified" }}</p>
+                </div>
+            </div>
+            
+            <!-- Skills Section -->
             <div class="card mb-4">
                 <div class="card-header bg-info text-white">
                     <h5 class="mb-0"><i class="fas fa-code"></i> Skills & Technologies</h5>
@@ -51,7 +86,7 @@
                 </div>
             </div>
             
-            <!-- DEPENDENCIES SECTION - NEW -->
+            <!-- Dependencies Section -->
             <div class="card mb-4">
                 <div class="card-header bg-warning text-dark">
                     <h5 class="mb-0"><i class="fas fa-link"></i> Team Dependencies</h5>
@@ -66,12 +101,9 @@
                             <ul class="list-group">
                                 {% for dep in upstream %}
                                     <li class="list-group-item">
-                                        <a href="{% url 'teams:team_detail' dep.from_team.id %}" class="text-decoration-none">
+                                        <a href="{% url 'teams:team_detail' dep.from_team.id %}">
                                             <strong>{{ dep.from_team.name }}</strong>
                                         </a>
-                                        {% if dep.description %}
-                                            <br><small class="text-muted">{{ dep.description|truncatewords:10 }}</small>
-                                        {% endif %}
                                     </li>
                                 {% empty %}
                                     <li class="list-group-item text-muted">No upstream dependencies</li>
@@ -86,12 +118,9 @@
                             <ul class="list-group">
                                 {% for dep in downstream %}
                                     <li class="list-group-item">
-                                        <a href="{% url 'teams:team_detail' dep.to_team.id %}" class="text-decoration-none">
+                                        <a href="{% url 'teams:team_detail' dep.to_team.id %}">
                                             <strong>{{ dep.to_team.name }}</strong>
                                         </a>
-                                        {% if dep.description %}
-                                            <br><small class="text-muted">{{ dep.description|truncatewords:10 }}</small>
-                                        {% endif %}
                                     </li>
                                 {% empty %}
                                     <li class="list-group-item text-muted">No downstream dependencies</li>
@@ -99,6 +128,19 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- NEW SECTION 3: Workload (Concurrent Projects)-->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-line"></i> Workload</h5>
+                </div>
+                <div class="card-body">
+                    <strong>Concurrent Projects:</strong> 
+                    <span class="badge {% if team.concurrent_projects > 5 %}bg-danger{% elif team.concurrent_projects > 3 %}bg-warning{% else %}bg-success{% endif %} fs-6 p-2">
+                        {{ team.concurrent_projects }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -112,16 +154,12 @@
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
                         {% for member in members %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{ member.user.get_full_name|default:member.user.username }}</strong>
-                                    <br>
-                                    <small class="text-muted">{{ member.user.email }}</small>
-                                </div>
-                                <span class="badge bg-secondary rounded-pill">Engineer</span>
+                            <li class="list-group-item">
+                                <strong>{{ member.user.username }}</strong><br>
+                                <small class="text-muted">{{ member.user.email }}</small>
                             </li>
                         {% empty %}
-                            <li class="list-group-item text-muted">No members assigned to this team.</li>
+                            <li class="list-group-item text-muted">No members assigned.</li>
                         {% endfor %}
                     </ul>
                 </div>

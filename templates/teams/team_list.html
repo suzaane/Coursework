@@ -50,7 +50,7 @@
                     </h5>
                     <p class="card-text text-muted small">{{ team.description|truncatewords:20 }}</p>
                     
-                    <!-- Skills Badges - NEW -->
+                    <!-- Skills Badges -->
                     {% if team.skills.all %}
                         <div class="mt-2 mb-2">
                             {% for skill in team.skills.all|slice:":3" %}
@@ -61,6 +61,18 @@
                             {% endif %}
                         </div>
                     {% endif %}
+
+                    {% if team.concurrent_projects > 0 %}
+                        <div class="mt-2">
+                            <small>
+                                <i class="fas fa-chart-line"></i> Projects:
+                                <span class="badge {% if team.concurrent_projects > 5 %}bg-danger{% elif team.concurrent_projects >3 %}bg-warning{% else %}bg-success{% endif %}">
+                                    {{ team.concurrent_projects}}
+                                </span>
+                            </small>
+                        </div>
+                    {% endif %}
+
                     
                     <hr>
                     <div class="small">
