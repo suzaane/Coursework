@@ -1,4 +1,15 @@
-# accounts/views.py
+"""
+Authentication views for user management.
+
+Handles:
+user registration (self-registration)
+login and logout
+password reset (forgot password)
+profile viewing and updating
+password changing
+
+"""
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -8,7 +19,14 @@ from .forms import RegistrationForm
 from .models import User
 
 def register(request):
-    """User self-registration"""
+    """Handles user self-registration
+
+    GET: Display empty registration form
+    POST: Validate form, create user and log them in automatically
+
+    After successful registration, user is redirected to dashboard.
+    
+    """
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -21,7 +39,15 @@ def register(request):
     return render(request, 'accounts/register.html', {'form': form})
 
 def user_login(request):
-    """User login page"""
+    """Handles user login page
+
+    GET: Display login form
+    POST: Authenticate user credentials and create session
+    
+    Uses Django's built-in authenticate() function.
+    Redirects to dashboard on success, shows error on failure.
+    
+    """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -35,13 +61,26 @@ def user_login(request):
     return render(request, 'accounts/login.html')
 
 def user_logout(request):
-    """User logout"""
+    """
+    Handle user logout.
+    
+    Destroys user session and redirects to login page.
+    Shows confirmation message to user.
+
+    """
     logout(request)
     messages.info(request, 'You have been logged out.')
     return redirect('login')
 
 def forgot_password(request):
-    """Forgot password page - sends reset email"""
+    """
+    Handle password reset requests.
+    
+    For production: This should send an email with reset link.
+    For coursework: Shows success message as demonstration.
+    
+    In a real implementation, would use Django's PasswordResetView.
+    """
     if request.method == 'POST':
         email = request.POST.get('email')
         try:
@@ -55,12 +94,31 @@ def forgot_password(request):
 
 @login_required
 def profile(request):
-    """View user profile"""
+    """
+    Display user profile page.
+    
+    Shows all user information including:
+    - Username, email, full name
+    - Role, phone, department
+    - Last login time
+    
+    Requires user to be logged in (@login_required decorator).
+    """
     return render(request, 'accounts/profile.html', {'user': request.user})
 
 @login_required
 def update_profile(request):
-    """Update user profile"""
+    """
+    Handle profile update form submission.
+    
+    Updates editable fields:
+    - First name, last name
+    - Email address
+    - Phone number
+    - Department
+    
+    Requires user to be logged in.
+    """
     if request.method == 'POST':
         user = request.user
         user.first_name = request.POST.get('first_name', '')
@@ -75,7 +133,16 @@ def update_profile(request):
 
 @login_required
 def change_password(request):
-    """Change user password"""
+    """
+    Handle password change form.
+    
+    Validates:
+    1. Old password is correct
+    2. New password and confirmation match
+    3. New password meets minimum length (8 characters)
+    
+    After successful change, user must login again with new password.
+    """
     if request.method == 'POST':
         old_password = request.POST.get('old_password')
         new_password = request.POST.get('new_password')
@@ -94,4 +161,3 @@ def change_password(request):
             return redirect('login')
     return render(request, 'accounts/change_password.html')
 
-# Create your views here.
