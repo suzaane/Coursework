@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Compose – Broadcast Portal{% endblock %}
+
+{% block topbar_left %}
+  <span class="topbar-title">Messages</span>
+{% endblock %}
+
+{% block content %}
+<style>
+  .msg-tabs { ... } /* same tabs CSS */
+  .compose-card {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+</style>
+
+{% include 'messaging/_tabs.html' %}
+
+<div class="card compose-card">
+  <div class="card-header">
+    <span>New Message</span>
+  </div>
+  <div class="card-body">
+    <form method="post" action="{% url 'messaging:send_message' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">RECIPIENT</label>
+        <select class="form-control" name="recipient">
+          <option>Select a team member</option>
+          <option>Alex Rivera</option>
+          <option>Jordan Smith</option>
+          <option>Morgan Vance</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">SUBJECT</label>
+        <input type="text" class="form-control" name="subject" placeholder="Enter subject">
+      </div>
+      <div class="form-group">
+        <label class="form-label">MESSAGE BODY</label>
+        <textarea class="form-control" name="body" rows="8" placeholder="Write your message..."></textarea>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button type="submit" class="btn btn-primary">Send</button>
+        <button type="submit" formaction="{% url 'messaging:save_draft' %}" class="btn btn-outline">Save as Draft</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

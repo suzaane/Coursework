@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Drafts – Broadcast Portal{% endblock %}
+
+{% block topbar_left %}
+  <span class="topbar-title">Messages</span>
+{% endblock %}
+
+{% block content %}
+<style>
+  .msg-tabs { ... } /* same tabs CSS */
+  .msg-list { ... } /* same as sent */
+</style>
+
+{% include 'messaging/_tabs.html' %}
+
+<div class="card" style="margin-top: 0; border-top: none; border-radius: 0;">
+  <div class="card-header">
+    <span>Drafts</span>
+    <a href="{% url 'messaging:compose' %}" class="btn btn-sm btn-primary">+ New</a>
+  </div>
+  <div class="card-body" style="padding: 0;">
+    <div class="msg-list">
+      <div class="msg-list-item">
+        <div class="thread-avatar">You</div>
+        <div class="msg-list-item-info">
+          <div class="name">To: Alex Rivera</div>
+          <div class="subject">Re: Q3 Strategy – comments</div>
+        </div>
+        <div class="msg-list-item-time">Saved 2h ago</div>
+      </div>
+      <div class="msg-list-item">
+        <div class="thread-avatar">You</div>
+        <div class="msg-list-item-info">
+          <div class="name">To: Jordan Smith</div>
+          <div class="subject">Meeting agenda draft</div>
+        </div>
+        <div class="msg-list-item-time">Saved yesterday</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

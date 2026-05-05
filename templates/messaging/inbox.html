@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inbox – Broadcast Portal{% endblock %}
+
+{% block topbar_left %}
+  <span class="topbar-title">Messages</span>
+{% endblock %}
+
+{% block content %}
+<style>
+  .msg-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-white);
+  }
+  .tab-item {
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.12s;
+  }
+  .tab-item:hover { background: var(--bg-page); color: var(--text-primary); }
+  .tab-item.active {
+    color: var(--brand-blue);
+    border-bottom-color: var(--brand-blue);
+    font-weight: 600;
+  }
+
+  .msg-container {
+    display: flex;
+    gap: 0;
+    height: calc(100vh - var(--topbar-height) - 56px); /* 56px = 2x28px padding */
+    margin: -28px; /* counter main-content padding */
+  }
+
+  .msg-list-panel {
+    width: 320px;
+    background: var(--bg-white);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .msg-list-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .msg-list-header .btn-new {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--brand-blue);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .msg-list-header .btn-new:hover { background: var(--brand-blue-dark); }
+
+  .msg-thread {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .msg-thread:hover { background: var(--bg-page); }
+  .msg-thread.active { background: var(--active-bg); }
+
+  .thread-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--brand-blue);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .thread-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .thread-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .thread-subject {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .thread-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .msg-detail-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-page);
+  }
+
+  .msg-header {
+    padding: 16px 24px;
+    background: var(--bg-white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .msg-header .thread-avatar {
+    width: 40px; height: 40px;
+    font-size: 14px;
+  }
+
+  .msg-header-info {
+    flex: 1;
+  }
+  .msg-header-name {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .msg-header-time {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .msg-body {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .msg-body-content {
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .msg-reply {
+    padding: 20px 24px;
+    background: var(--bg-white);
+    border-top: 1px solid var(--border);
+  }
+  .msg-reply-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .reply-form-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .reply-form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+  }
+</style>
+
+<!-- Tabs -->
+{% include 'messaging/_tabs.html' %}
+
+<div class="msg-container">
+  <!-- Conversation list -->
+  <div class="msg-list-panel">
+    <div class="msg-list-header">
+      <span>Inbox</span>
+      <a href="{% url 'messaging:compose' %}" class="btn-new">+ New</a>
+    </div>
+    <a href="?thread=1" class="msg-thread active">
+      <div class="thread-avatar">AR</div>
+      <div class="thread-info">
+        <div class="thread-name">Alex Rivera</div>
+        <div class="thread-subject">Q3 Strategy Alignment</div>
+        <div class="thread-time">10:24 AM</div>
+      </div>
+    </a>
+    <a href="?thread=2" class="msg-thread">
+      <div class="thread-avatar">JS</div>
+      <div class="thread-info">
+        <div class="thread-name">Jordan Smith</div>
+        <div class="thread-subject">Team Sync Summary</div>
+        <div class="thread-time">Yesterday</div>
+      </div>
+    </a>
+    <a href="?thread=3" class="msg-thread">
+      <div class="thread-avatar">MV</div>
+      <div class="thread-info">
+        <div class="thread-name">Morgan Vance</div>
+        <div class="thread-subject">Invoice #9082 Pending</div>
+        <div class="thread-time">Mon</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Message detail -->
+  <div class="msg-detail-panel">
+    <div class="msg-header">
+      <div class="thread-avatar">AR</div>
+      <div class="msg-header-info">
+        <div class="msg-header-name">Alex Rivera</div>
+        <div class="msg-header-time">10:24 AM</div>
+      </div>
+    </div>
+
+    <div class="msg-body">
+      <div class="msg-body-content">
+        <p><strong>Hi Team,</strong></p>
+        <p>I hope your week is off to a productive start. I've spent some time distilling our feedback from the last leadership meeting and have mapped out the core pillars for our Q3 strategy.</p>
+        <p>Best regards,<br>Alex Rivera</p>
+      </div>
+    </div>
+
+    <div class="msg-reply">
+      <div class="msg-reply-title">Compose Reply</div>
+      <form method="post" action="{% url 'messaging:send_reply' %}">
+        {% csrf_token %}
+        <div class="reply-form-row">
+          <div class="form-group">
+            <label class="form-label">RECIPIENT</label>
+            <select class="form-control" name="recipient">
+              <option>Alex Rivera</option>
+              <option>Jordan Smith</option>
+              <option>Morgan Vance</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">SUBJECT</label>
+            <input type="text" class="form-control" name="subject" value="Re: Q3 Strategy Alignment">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">MESSAGE BODY</label>
+          <textarea class="form-control" name="body" rows="5" placeholder="Write your response here..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Reply</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

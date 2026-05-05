@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sent – Broadcast Portal{% endblock %}
+
+{% block topbar_left %}
+  <span class="topbar-title">Messages</span>
+{% endblock %}
+
+{% block content %}
+<style>
+  .msg-tabs { ... } /* same tabs CSS as above */
+  .msg-tabs { ... } /* Inline - I'll keep it brief, assume you include it */
+  .msg-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .msg-list-item {
+    background: var(--bg-white);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .msg-list-item .thread-avatar { width: 36px; height: 36px; font-size: 13px; }
+  .msg-list-item-info { flex: 1; min-width: 0; }
+  .msg-list-item-info .name { font-weight: 600; font-size: 13.5px; }
+  .msg-list-item-info .subject { font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg-list-item-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+</style>
+
+{% include 'messaging/_tabs.html' %}
+
+<div class="card" style="margin-top: 0; border-top: none; border-radius: 0;">
+  <div class="card-header">
+    <span>Sent</span>
+    <a href="{% url 'messaging:compose' %}" class="btn btn-sm btn-primary">+ New</a>
+  </div>
+  <div class="card-body" style="padding: 0;">
+    <div class="msg-list">
+      <div class="msg-list-item">
+        <div class="thread-avatar">AR</div>
+        <div class="msg-list-item-info">
+          <div class="name">Alex Rivera</div>
+          <div class="subject">Re: Q3 Strategy Alignment</div>
+        </div>
+        <div class="msg-list-item-time">10:24 AM</div>
+      </div>
+      <div class="msg-list-item">
+        <div class="thread-avatar">JS</div>
+        <div class="msg-list-item-info">
+          <div class="name">Jordan Smith</div>
+          <div class="subject">Follow-up on Sprint Review</div>
+        </div>
+        <div class="msg-list-item-time">Yesterday</div>
+      </div>
+      <div class="msg-list-item">
+        <div class="thread-avatar">MV</div>
+        <div class="msg-list-item-info">
+          <div class="name">Morgan Vance</div>
+          <div class="subject">Invoice #9082 Confirmation</div>
+        </div>
+        <div class="msg-list-item-time">Mon</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

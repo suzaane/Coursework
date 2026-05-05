@@ -1,0 +1,14 @@
+<div class="msg-tabs">
+  <a href="{% url 'messaging:inbox' %}"
+     class="tab-item {% if request.resolver_match.url_name == 'inbox' %}active{% endif %}">
+    Inbox
+  </a>
+  <a href="{% url 'messaging:sent' %}"
+     class="tab-item {% if request.resolver_match.url_name == 'sent' %}active{% endif %}">
+    Sent
+  </a>
+  <a href="{% url 'messaging:drafts' %}"
+     class="tab-item {% if request.resolver_match.url_name == 'drafts' %}active{% endif %}">
+    Drafts
+  </a>
+</div>

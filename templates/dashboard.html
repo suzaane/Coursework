@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard — Broadcast Portal{% endblock %}
+
+{% block content %}
+
+<!-- Welcome heading -->
+<div style="margin-bottom:24px;">
+  <h2 style="font-size:26px;font-weight:700;color:var(--text-primary);margin-bottom:4px;">
+    Welcome back , {{ user.first_name|default:user.username }}
+  </h2>
+  <p style="font-size:13.5px;color:var(--text-secondary);">Here is whats happening today</p>
+</div>
+
+
+<!-- ── TOP ROW: 3 stat cards + quick actions ── -->
+<div class="stats-row">
+
+  <!-- Departments -->
+  <div class="stat-card">
+    <div class="stat-label">
+      <i class="bi bi-layout-text-sidebar" style="font-size:14px;color:var(--brand-blue);"></i>
+      Departments
+    </div>
+    <div class="stat-value">{{ dept_count|default:"—" }}</div>
+    <div class="stat-sub">{{ dept_active|default:"Active" }}</div>
+  </div>
+
+  <!-- Total Teams -->
+  <div class="stat-card">
+    <div class="stat-label">
+      <i class="bi bi-people" style="font-size:14px;color:var(--brand-blue);"></i>
+      Total Teams
+    </div>
+    <div class="stat-value">{{ team_count|default:"—" }}</div>
+    <div class="stat-sub">{{ team_sub|default:"Clusters" }}</div>
+  </div>
+
+  <!-- Total Members -->
+  <div class="stat-card">
+    <div class="stat-label">
+      <i class="bi bi-person-check" style="font-size:14px;color:var(--brand-blue);"></i>
+      Total Members
+    </div>
+    <div class="stat-value">{{ member_count|default:"—" }}</div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <div class="qa-title">Quick Actions</div>
+
+    <a href="{% url 'messaging:compose' %}" class="qa-item primary">
+      <span class="qa-item-left">
+        <i class="bi bi-chat-square-text"></i>
+        Send Message
+      </span>
+      <i class="bi bi-chevron-right"></i>
+    </a>
+
+    <a href="#" class="qa-item secondary">
+      <span class="qa-item-left">
+        <i class="bi bi-calendar3" style="color:var(--brand-blue);"></i>
+        Schedule Meeting
+      </span>
+      <i class="bi bi-chevron-right"></i>
+    </a>
+
+    <a href="#" class="qa-item secondary">
+      <span class="qa-item-left">
+        <i class="bi bi-diagram-3" style="color:var(--brand-blue);"></i>
+        Organization Chart
+      </span>
+      <i class="bi bi-chevron-right"></i>
+    </a>
+  </div>
+
+</div>
+
+
+<!-- ── MIDDLE ROW: recently viewed + activity ── -->
+<div class="dashboard-grid">
+
+  <!-- Recently Viewed Teams -->
+  <div class="card">
+    <div class="card-header">
+      <span>Recently Viewed Teams</span>
+      <a href="#" class="link-all">View All</a>
+    </div>
+    <div class="card-body" style="padding:0 20px;">
+
+      {% if recent_teams %}
+        {% for team in recent_teams %}
+        <div class="team-row">
+          <div class="team-row-icon">
+            <i class="bi bi-diagram-2" style="font-size:16px;"></i>
+          </div>
+          <div>
+            <div class="team-row-name">{{ team.name }}</div>
+            <div class="team-row-meta">
+              <span><i class="bi bi-people"></i> {{ team.member_count|default:"—" }}</span>
+              <span><i class="bi bi-github"></i> {{ team.repo_count|default:"—" }}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <!-- Placeholder rows shown until teams app is integrated -->
+        <div class="team-row">
+          <div class="team-row-icon">
+            <i class="bi bi-diagram-2" style="font-size:16px;"></i>
+          </div>
+          <div>
+            <div class="team-row-name">Frontend Development</div>
+            <div class="team-row-meta">
+              <span><i class="bi bi-people"></i> 12</span>
+              <span><i class="bi bi-github"></i> 8</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-row">
+          <div class="team-row-icon">
+            <i class="bi bi-diagram-2" style="font-size:16px;"></i>
+          </div>
+          <div>
+            <div class="team-row-name">Backend Development</div>
+            <div class="team-row-meta">
+              <span><i class="bi bi-people"></i> 12</span>
+              <span><i class="bi bi-github"></i> 8</span>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- Recent Inbox Messages (from your messaging app) -->
+  <div class="card">
+    <div class="card-header">
+      <span>Recent Messages</span>
+      <a href="{% url 'messaging:inbox' %}" class="link-all">View All</a>
+    </div>
+    <div style="padding:0;">
+      {% if recent_messages %}
+        {% for msg in recent_messages %}
+        <div class="activity-item" style="cursor:pointer;"
+             onclick="location.href='{% url 'messaging:view_message' msg.pk %}'">
+          <div class="activity-dot blue">
+            <i class="bi bi-envelope"></i>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div class="activity-title" style="color:var(--text-primary);">
+              {{ msg.sender.get_full_name|default:msg.sender.username }}
+            </div>
+            <div class="activity-body">{{ msg.subject }}</div>
+          </div>
+          <div class="activity-time">{{ msg.created_at|timesince }} ago</div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p style="padding:20px;font-size:13px;color:var(--text-muted);">
+          No messages yet.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ── BOTTOM: Recent Activity ── -->
+<div>
+  <div class="section-header">
+    <div class="section-title">Recent Activity</div>
+    <a href="#" class="link-all">View All</a>
+  </div>
+
+  <div class="card">
+    <!-- Critical alert example -->
+    <div class="activity-item">
+      <div class="activity-dot red">
+        <i class="bi bi-exclamation-circle"></i>
+      </div>
+      <div style="flex:1;">
+        <div class="activity-title red">Critical Update</div>
+        <div class="activity-body">
+          Server cluster node US-EAST-1 is experiencing unusual latency spikes.
+          Automatic failover initiated for core database services.
+        </div>
+      </div>
+      <div class="activity-time">2 MINS AGO</div>
+    </div>
+
+    <div class="activity-item warn-border">
+      <div class="activity-dot yellow">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <div style="flex:1;">
+        <div class="activity-title yellow">System Alert</div>
+        <div class="activity-body">
+          Weekly security audit complete. 3 non-critical policy violations detected
+          in the Frontend repository. Please review the report.
+        </div>
+      </div>
+      <div class="activity-time">45 MINS AGO</div>
+    </div>
+
+    <div class="activity-item">
+      <div class="activity-dot blue">
+        <i class="bi bi-info-circle"></i>
+      </div>
+      <div style="flex:1;">
+        <div class="activity-title">Deployment Success</div>
+        <div class="activity-body">
+          Version 4.2.0 has been successfully deployed to the Production environment.
+          All health checks passed.
+        </div>
+      </div>
+      <div class="activity-time">2 HOURS AGO</div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
