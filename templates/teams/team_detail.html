@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between mb-3">
+        <h1><i class="fas fa-users"></i> {{ team.name }}</h1>
+        <div>
+            <a href="mailto:{{ team.contact_email }}" class="btn btn-outline-primary">
+                <i class="fas fa-envelope"></i> Email Team
+            </a>
+            {% comment %}
+            <a href="{% url 'schedule:new_meeting' %}?team_id={{ team.id }}" class="btn btn-outline-success">
+                <i class="fas fa-calendar-plus"></i> Schedule Meeting
+            </a>
+            {% endcomment %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Team Info Column -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Team Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr><th>Department:</th><td>{{ team.department|default:"-" }}</td></tr>
+                        <tr><th>Manager:</th><td>{{ team.manager.username|default:"-" }}</td></tr>
+                        <tr><th>Contact Email:</th><td>{{ team.contact_email }}</td></tr>
+                        <tr><th>Slack:</th><td>{{ team.contact_slack|default:"-" }}</td></tr>
+                        <tr><th>Repository:</th><td>{% if team.code_repository %}<a href="{{ team.code_repository }}" target="_blank">GitHub</a>{% else %}-{% endif %}</td></tr>
+                        <tr><th>Description:</th><td>{{ team.description|linebreaks }}</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- SKILLS SECTION - NEW -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-code"></i> Skills & Technologies</h5>
+                </div>
+                <div class="card-body">
+                    {% for skill in skills %}
+                        <span class="badge bg-secondary me-2 mb-2 p-2" style="font-size: 0.9rem;">
+                            <i class="fas fa-tag"></i> {{ skill.name }}
+                        </span>
+                    {% empty %}
+                        <p class="text-muted mb-0">No skills listed for this team.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- DEPENDENCIES SECTION - NEW -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-link"></i> Team Dependencies</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">
+                                <i class="fas fa-arrow-up"></i> Upstream Dependencies
+                                <small class="text-muted">(This team depends on)</small>
+                            </h6>
+                            <ul class="list-group">
+                                {% for dep in upstream %}
+                                    <li class="list-group-item">
+                                        <a href="{% url 'teams:team_detail' dep.from_team.id %}" class="text-decoration-none">
+                                            <strong>{{ dep.from_team.name }}</strong>
+                                        </a>
+                                        {% if dep.description %}
+                                            <br><small class="text-muted">{{ dep.description|truncatewords:10 }}</small>
+                                        {% endif %}
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item text-muted">No upstream dependencies</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-success">
+                                <i class="fas fa-arrow-down"></i> Downstream Dependencies
+                                <small class="text-muted">(Teams depending on this)</small>
+                            </h6>
+                            <ul class="list-group">
+                                {% for dep in downstream %}
+                                    <li class="list-group-item">
+                                        <a href="{% url 'teams:team_detail' dep.to_team.id %}" class="text-decoration-none">
+                                            <strong>{{ dep.to_team.name }}</strong>
+                                        </a>
+                                        {% if dep.description %}
+                                            <br><small class="text-muted">{{ dep.description|truncatewords:10 }}</small>
+                                        {% endif %}
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item text-muted">No downstream dependencies</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Team Members Column -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-friends"></i> Team Members ({{ members|length }})</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for member in members %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ member.user.get_full_name|default:member.user.username }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ member.user.email }}</small>
+                                </div>
+                                <span class="badge bg-secondary rounded-pill">Engineer</span>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">No members assigned to this team.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Back Button -->
+    <div class="mt-4">
+        <a href="{% url 'teams:team_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to All Teams
+        </a>
+    </div>
+</div>
+{% endblock %}

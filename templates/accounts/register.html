@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Register for Broadcast Portal</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Username*</label>
+                                <input type="text" name="username" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Email*</label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Password*</label>
+                                <input type="password" name="password1" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Confirm Password*</label>
+                                <input type="password" name="password2" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Role*</label>
+                                <select name="role" class="form-control">
+                                    <option value="engineer">Engineer</option>
+                                    <option value="team_leader">Team Leader</option>
+                                    <option value="dept_leader">Department Leader</option>
+                                    <option value="senior_manager">Senior Manager</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Phone</label>
+                                <input type="text" name="phone" class="form-control">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label>Department</label>
+                                <input type="text" name="department" class="form-control">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Register</button>
+                    </form>
+                    <hr>
+                    <p class="text-center">Already have an account? <a href="{% url 'accounts:login' %}">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
