@@ -1,9 +1,24 @@
-# accounts/models.py
+"""
+Custom User model for the Broadcast Portal.
+
+Extends Django's AbstractUser to add role selection and additional fields.
+This replaces the default auth.User model.
+
+"""
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-    """Custom user model with role selection"""
+    """
+    Custom user model with role selection.
+    
+    Extends Django's built-in User with:
+    - Role choices (Engineer, Team Leader, Department Leader, Senior Manager)
+    - Phone number field
+    - Department field
+    
+    The role field determines what permissions the user has in the application.
+    """
     ROLE_CHOICES = (
         ('engineer', 'Engineer'),
         ('team_leader', 'Team Leader'),
@@ -17,4 +32,3 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-# Create your models here.
