@@ -39,33 +39,30 @@
         Dashboard
       </a>
 
-      <!-- Teams — Student 1 -->
-      <a href="{% url 'teams:list' %}"
-         class="nav-item {% if 'teams' in request.resolver_match.app_name|default:'' %}active{% endif %}">
-        <i class="bi bi-person nav-icon"></i>
+      <!-- Teams — disabled until Student 1 provides urls.py -->
+      <a href="#" class="nav-item">
+        <i class="bi bi-people nav-icon"></i>
         Teams
       </a>
 
-      <!-- Department — Student 2 -->
-      <a href="{% url 'organisation:index' %}"
-         class="nav-item {% if 'organisation' in request.resolver_match.app_name|default:'' %}active{% endif %}">
+      <!-- Department — disabled until Student 2 provides urls.py -->
+      <a href="#" class="nav-item">
         <i class="bi bi-layout-text-sidebar nav-icon"></i>
         Department
       </a>
 
-      <!-- Messages — Student 3 (YOU) -->
+      <!-- Messages — YOUR APP (works) -->
       <a href="{% url 'messaging:inbox' %}"
          class="nav-item {% if 'messaging' in request.resolver_match.app_name|default:'' %}active{% endif %}">
         <i class="bi bi-chat-square-text nav-icon"></i>
         Messages
-        {% if unread_count and unread_count > 0 %}
+        {% if unread_count|default:0 > 0 %}
           <span class="nav-badge">{{ unread_count }}</span>
         {% endif %}
       </a>
 
-      <!-- Schedule — Student 4 -->
-      <a href="{% url 'schedule:index' %}"
-         class="nav-item {% if 'schedule' in request.resolver_match.app_name|default:'' %}active{% endif %}">
+      <!-- Schedule — disabled until Student 4 provides urls.py -->
+      <a href="#" class="nav-item">
         <i class="bi bi-calendar3 nav-icon"></i>
         Schedule
       </a>
@@ -130,34 +127,30 @@
   </header>
   <!-- ══ END TOPBAR ══ -->
 
-
-  <!-- ══════════════════════════════════════
-       MAIN CONTENT
-       ══════════════════════════════════════ -->
-  <main class="main-content">
-
-    <!-- Django flash messages -->
-    {% if messages %}
-      <div class="flash-wrap">
-        {% for message in messages %}
-          <div class="flash-msg {{ message.tags|default:'info' }}">
-            <span>{{ message }}</span>
-            <button class="flash-close" onclick="this.parentElement.remove()">×</button>
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    {% block content %}{% endblock %}
-
-  </main>
-  <!-- ══ END MAIN ══ -->
-
-
-{% else %}
-  {# Not logged in — auth pages render without sidebar #}
-  {% block content %}{% endblock %}
 {% endif %}
+
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT (always present)
+     ══════════════════════════════════════ -->
+<main class="main-content">
+
+  <!-- Django flash messages -->
+  {% if messages %}
+    <div class="flash-wrap">
+      {% for message in messages %}
+        <div class="flash-msg {{ message.tags|default:'info' }}">
+          <span>{{ message }}</span>
+          <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+</main>
+<!-- ══ END MAIN ══ -->
 
 {% block extra_js %}{% endblock %}
 
