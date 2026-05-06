@@ -9,8 +9,31 @@
 
 {% block content %}
 <style>
-  .msg-tabs { ... } /* same tabs CSS as above */
-  .msg-tabs { ... } /* Inline - I'll keep it brief, assume you include it */
+  /* Tabs – same as other messaging pages */
+  .msg-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-white);
+  }
+  .tab-item {
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.12s;
+  }
+  .tab-item:hover { background: var(--bg-page); color: var(--text-primary); }
+  .tab-item.active {
+    color: var(--brand-blue);
+    border-bottom-color: var(--brand-blue);
+    font-weight: 600;
+  }
+
+  /* Message list */
   .msg-list {
     display: flex;
     flex-direction: column;
@@ -27,11 +50,34 @@
     align-items: center;
     gap: 14px;
   }
-  .msg-list-item .thread-avatar { width: 36px; height: 36px; font-size: 13px; }
-  .msg-list-item-info { flex: 1; min-width: 0; }
-  .msg-list-item-info .name { font-weight: 600; font-size: 13.5px; }
-  .msg-list-item-info .subject { font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .msg-list-item-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+  .msg-list-item .thread-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--brand-blue);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .msg-list-item-info {
+    flex: 1; min-width: 0;
+  }
+  .msg-list-item-info .name {
+    font-weight: 600; font-size: 13.5px;
+  }
+  .msg-list-item-info .subject {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .msg-list-item-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
 </style>
 
 {% include 'messaging/_tabs.html' %}

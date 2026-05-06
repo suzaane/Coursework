@@ -9,7 +9,31 @@
 
 {% block content %}
 <style>
-  .msg-tabs { ... } /* same tabs CSS */
+  /* Tabs – same as other messaging pages */
+  .msg-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-white);
+  }
+  .tab-item {
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.12s;
+  }
+  .tab-item:hover { background: var(--bg-page); color: var(--text-primary); }
+  .tab-item.active {
+    color: var(--brand-blue);
+    border-bottom-color: var(--brand-blue);
+    font-weight: 600;
+  }
+
+  /* Compose card */
   .compose-card {
     max-width: 700px;
     margin: 0 auto;
@@ -23,7 +47,10 @@
     <span>New Message</span>
   </div>
   <div class="card-body">
-    <form method="post" action="{% url 'messaging:send_message' %}">
+    <!-- ⚠️ The action must point to a valid URL name. 
+         You have 'compose' view in messaging/urls.py, not 'send_message'. 
+         Use 'messaging:compose' and it will handle both send & save-draft. -->
+    <form method="post" action="{% url 'messaging:compose' %}">
       {% csrf_token %}
       <div class="form-group">
         <label class="form-label">RECIPIENT</label>
@@ -44,7 +71,8 @@
       </div>
       <div style="display: flex; gap: 10px;">
         <button type="submit" class="btn btn-primary">Send</button>
-        <button type="submit" formaction="{% url 'messaging:save_draft' %}" class="btn btn-outline">Save as Draft</button>
+        <!-- Save as Draft is still handled by the same view; it just sets a flag -->
+        <button type="submit" name="save_draft" value="1" class="btn btn-outline">Save as Draft</button>
       </div>
     </form>
   </div>
