@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block main_content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between mb-3">
         <h1><i class="fas fa-users"></i> {{ team.name }}</h1>
@@ -60,7 +60,7 @@
                 </div>
             </div>
             
-            <!-- NEW SECTION 2: Development Focus -->
+            <!-- Development Focus -->
             <div class="card mb-4">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0"><i class="fas fa-bullseye"></i> Development Focus</h5>
@@ -131,14 +131,18 @@
                 </div>
             </div>
             
-            <!-- NEW SECTION 3: Workload (Concurrent Projects)-->
+            <!-- Workload (Concurrent Projects)-->
             <div class="card mb-4">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0"><i class="fas fa-chart-line"></i> Workload</h5>
                 </div>
                 <div class="card-body">
                     <strong>Concurrent Projects:</strong> 
-                    <span class="badge {% if team.concurrent_projects > 5 %}bg-danger{% elif team.concurrent_projects > 3 %}bg-warning{% else %}bg-success{% endif %} fs-6 p-2">
+                    <span class="badge 
+                        {% if team.concurrent_projects > 5 %}bg-danger
+                        {% elif team.concurrent_projects > 3 %}bg-warning
+                        {% else %}bg-success
+                        {% endif %}">
                         {{ team.concurrent_projects }}
                     </span>
                 </div>

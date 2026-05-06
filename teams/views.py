@@ -43,7 +43,7 @@ def team_list(request):
     skills = Skill.objects.all()
     skill_id = request.GET.get('skill')
     if skill_id:
-        teams = teams.filter(skills_id=skill_id)
+        teams = teams.filter(skills__id=skill_id)
 
     return render(request, 'teams/team_list.html',{
         'teams':teams,

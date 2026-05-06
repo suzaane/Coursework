@@ -34,6 +34,8 @@ def register(request):
             login(request, user)
             messages.success(request, 'Registration successful! Welcome!')
             return redirect('dashboard')
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = RegistrationForm()
     return render(request, 'accounts/register.html', {'form': form})
@@ -53,6 +55,10 @@ def user_login(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            # Clearing all existing messages before login
+            storage = messages.get_messages(request)
+            storage.used = True
+
             login(request, user)
             messages.success(request, f'Welcome back, {user.username}!')
             return redirect('dashboard')
@@ -70,7 +76,7 @@ def user_logout(request):
     """
     logout(request)
     messages.info(request, 'You have been logged out.')
-    return redirect('login')
+    return redirect('accounts:login')
 
 def forgot_password(request):
     """
@@ -89,7 +95,7 @@ def forgot_password(request):
             messages.success(request, f'Password reset link sent to {email}')
         except User.DoesNotExist:
             messages.error(request, 'No account found with that email.')
-        return redirect('login')
+        return redirect('accounts:login')
     return render(request, 'accounts/forgot_password.html')
 
 @login_required
@@ -158,6 +164,6 @@ def change_password(request):
             request.user.set_password(new_password)
             request.user.save()
             messages.success(request, 'Password changed successfully! Please login again.')
-            return redirect('login')
+            return redirect('accounts:login')
     return render(request, 'accounts/change_password.html')
 
