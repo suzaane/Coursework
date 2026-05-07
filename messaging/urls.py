@@ -1,16 +1,15 @@
 from django.urls import path
-from django.views.generic import TemplateView
+from . import views
 
 app_name = 'messaging'
 
 urlpatterns = [
-    path('inbox/', TemplateView.as_view(template_name='messaging/inbox.html'), name='inbox'),
-    path('sent/', TemplateView.as_view(template_name='messaging/sent.html'), name='sent'),
-    path('drafts/', TemplateView.as_view(template_name='messaging/drafts.html'), name='drafts'),
-    path('compose/', TemplateView.as_view(template_name='messaging/compose.html'), name='compose'),
-    path('message/<int:pk>/', TemplateView.as_view(template_name='messaging/message_detail.html'), name='message_detail'),
-    # Dummy actions
-    path('send-message/', TemplateView.as_view(template_name='messaging/inbox.html'), name='send_message'),
-    path('send-reply/', TemplateView.as_view(template_name='messaging/inbox.html'), name='send_reply'),
-    path('save-draft/', TemplateView.as_view(template_name='messaging/drafts.html'), name='save_draft'),
+    path('inbox/',          views.inbox,          name='inbox'),
+    path('sent/',           views.sent,            name='sent'),
+    path('drafts/',         views.drafts,          name='drafts'),
+    path('compose/',        views.compose,         name='compose'),
+    path('compose/<int:draft_id>/', views.compose, name='compose_draft'),
+    path('message/<int:pk>/',       views.view_message,  name='view_message'),
+    path('delete/<int:pk>/',        views.delete_message, name='delete_message'),
+    path('reply/<int:pk>/',         views.reply,          name='reply'),
 ]

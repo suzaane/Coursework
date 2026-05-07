@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block topbar_left %}<span class="topbar-title">Profile</span>{% endblock %}
+{% block content %}
+  <div class="card">
+    <div class="card-header">Your Profile</div>
+    <div class="card-body">
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p>Profile page placeholder — awaiting full implementation from auth lead.</p>
+    </div>
+  </div>
+{% endblock %}
