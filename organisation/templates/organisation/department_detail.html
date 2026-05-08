@@ -1,31 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="dashboard-card">
-    <a href="{% url 'organisation:department_list' %}" class="btn btn-outline-secondary mb-3">← Back to Departments</a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'organisation:department_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Departments
+        </a>
+    </div>
     
     <h2>{{ department.name }}</h2>
     <p class="text-muted">{{ department.specialisation }}</p>
-    <p>{{ department.description }}</p>
+    <p>{{ department.description|default:"No description provided." }}</p>
 
     {% if department.leader %}
     <div class="card mb-4">
-        <div class="card-header">
-            <strong>Department Leader</strong>
+        <div class="card-header bg-primary text-white">
+            <strong><i class="fas fa-user-tie"></i> Department Leader</strong>
         </div>
         <div class="card-body">
-            <p><strong>{{ department.leader.name }}</strong></p>
+            <h5>{{ department.leader.name }}</h5>
             <p>Email: {{ department.leader.email }}</p>
             <p>Phone: {{ department.leader.phone|default:"Not provided" }}</p>
         </div>
     </div>
     {% endif %}
 
-    <h4>Teams in this Department</h4>
-    <div class="list-group">
+    <h4><i class="fas fa-users"></i> Teams in {{ department.name }} ({{ team_count }})</h4>
+    <div class="row mt-3">
         {% for team in teams %}
-        <div class="list-group-item">{{ team.name }}</div>
+        <div class="col-md-6 mb-3">
+            <div class="team-card">
+                <h5>{{ team.name }}</h5>
+                <p class="small text-muted">{{ team.description|truncatewords:20 }}</p>
+                <p><strong>Manager:</strong> {{ team.manager.username|default:"Not assigned" }}</p>
+                <p><strong>Skills:</strong> 
+                    {% for skill in team.skills.all|slice:":3" %}
+                        <span class="badge-custom">{{ skill.name }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
         {% empty %}
-        <div class="alert alert-info">No teams assigned yet.</div>
+        <div class="col-12">
+            <div class="alert alert-info">No teams assigned to this department yet.</div>
+        </div>
         {% endfor %}
     </div>
 </div>

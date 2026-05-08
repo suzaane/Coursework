@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="dashboard-card">
-    <h2>🔗 Team Dependencies</h2>
+    <h2><i class="fas fa-link"></i> Team Dependencies</h2>
     <p class="text-muted">View upstream and downstream team relationships</p>
+    
+    <form method="get" class="mb-3">
+        <select name="direction" class="form-select w-auto d-inline" onchange="this.form.submit()">
+            <option value="">All dependencies</option>
+            <option value="upstream" {% if selected_direction == 'upstream' %}selected{% endif %}>Upstream</option>
+        </select>
+    </form>
     
     {% if dependencies %}
     <table class="table table-striped">
@@ -12,8 +19,8 @@
         <tbody>
         {% for dep in dependencies %}
         <tr>
-            <td>{{ dep.from_team.name }} → {{ dep.to_team.name }}</td>
-            <td>{{ dep.description }}</td>
+            <td><strong>{{ dep.from_team.name }}</strong> <i class="fas fa-arrow-right"></i> <strong>{{ dep.to_team.name }}</strong></td>
+            <td>{{ dep.description|default:"No description" }}</td>
         </tr>
         {% endfor %}
         </tbody>

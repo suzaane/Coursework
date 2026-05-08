@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from .admin_dashboard import admin_site
 
 app_name = 'organisation'
 
@@ -11,4 +10,6 @@ urlpatterns = [
     path('team-types/', views.teamtype_list, name='teamtype_list'),
     path('dependencies/', views.dependency_list, name='dependency_list'),
     path('org-chart/', views.org_chart, name='org_chart'),
+    path('admin-stats/', views.admin_statistics, name='admin_stats'),
+    path('admin-reports/', views.admin_reports, name='admin_reports'),
 ]
