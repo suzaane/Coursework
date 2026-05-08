@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Team Dependencies</h2>
+  
+  {% if dependencies %}
+  <form method="get" class="mb-3">
+    <label for="direction" class="me-2">Filter by direction:</label>
+    <select name="direction" id="direction" class="form-select w-auto d-inline" onchange="this.form.submit()">
+      <option value="">All dependencies</option>
+      <option value="upstream" {% if selected_direction == 'upstream' %}selected{% endif %}>Upstream (depends on)</option>
+      <option value="downstream" {% if selected_direction == 'downstream' %}selected{% endif %}>Downstream (depended by)</option>
+    </select>
+  </form>
+  
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr><th>From Team</th><th>To Team</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    {% for dep in dependencies %}
+    <tr>
+      <td><strong>{{ dep.from_team.name }}</strong> → <strong>{{ dep.to_team.name }}</strong></td>
+      <td>{{ dep.description|default:"No description" }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="alert alert-info">No dependencies found. (Teams app integration pending)</div>
+  {% endif %}
+</div>
+{% endblock %}

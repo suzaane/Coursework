@@ -1,3 +1,42 @@
 from django.db import models
 
-# Create your models here.
+class Department(models.Model):
+    """Represents a broadcast company department."""
+    name = models.CharField(max_length=200, unique=True)
+    description = models.TextField(blank=True)
+    specialisation = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
+class DepartmentLeader(models.Model):
+    """Tracks the leader of each department."""
+    department = models.OneToOneField(
+        Department, on_delete=models.CASCADE, related_name='leader'
+    )
+    name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=50, blank=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.department.name})"
+
+
+class TeamType(models.Model):
+    """Categorises teams by type e.g. Platform, Product, QA."""
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Team Types</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tt in team_types %}
+      <tr>
+        <td>{{ tt.name }}</td>
+        <td>{{ tt.description }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="2">No team types found. Add some in admin.</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
