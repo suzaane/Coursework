@@ -1,0 +1,63 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>📊 Reports</h1>
+    <p>Export data from the system</p>
+    
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5>Departments Report</h5>
+                </div>
+                <div class="card-body">
+                    <p>Export all departments data</p>
+                    <a href="/admin/organisation/department/" class="btn btn-primary">
+                        Go to Departments
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5>Team Types Report</h5>
+                </div>
+                <div class="card-body">
+                    <p>Export all team types data</p>
+                    <a href="/admin/organisation/teamtype/" class="btn btn-success">
+                        Go to Team Types
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5>Department Leaders Report</h5>
+                </div>
+                <div class="card-body">
+                    <p>Export all department leaders data</p>
+                    <a href="/admin/organisation/departmentleader/" class="btn btn-info">
+                        Go to Leaders
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5>Export All Data</h5>
+                </div>
+                <div class="card-body">
+                    <p>Export all data to CSV</p>
+                    <button class="btn btn-warning" onclick="alert('Use the export buttons in each section')">
+                        Export Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

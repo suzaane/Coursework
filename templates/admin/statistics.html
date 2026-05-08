@@ -1,0 +1,65 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>📈 Statistics Dashboard</h1>
+    <p>Data visualization dashboard for Broadcast Portal</p>
+    
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <h1>{{ department_count }}</h1>
+                    <p>Departments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <h1>{{ teamtype_count }}</h1>
+                    <p>Team Types</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <h1>{{ leader_count }}</h1>
+                    <p>Department Leaders</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header bg-info text-white">
+            <h5>Summary Table</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Departments</td>
+                        <td>{{ department_count }}</td>
+                    </tr>
+                    <tr>
+                        <td>Team Types</td>
+                        <td>{{ teamtype_count }}</td>
+                    </tr>
+                    <tr>
+                        <td>Department Leaders</td>
+                        <td>{{ leader_count }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
