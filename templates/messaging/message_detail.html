@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Message – Broadcast Portal{% endblock %}
+{% block title %}{{ msg.subject }} – Broadcast Portal{% endblock %}
 
 {% block topbar_left %}
   <span class="topbar-title">Messages</span>
@@ -9,95 +9,126 @@
 
 {% block content %}
 <style>
-  /* Tabs – same as other messaging pages */
   .msg-tabs {
-    display: flex;
-    gap: 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-white);
+    display: flex; gap: 0; margin-bottom: 20px;
+    border-bottom: 1px solid var(--border); background: var(--bg-white);
   }
   .tab-item {
-    padding: 10px 24px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-    transition: all 0.12s;
+    padding: 10px 24px; font-size: 13px; font-weight: 500;
+    color: var(--text-secondary); text-decoration: none;
+    border-bottom: 2px solid transparent; transition: all 0.12s;
   }
   .tab-item:hover { background: var(--bg-page); color: var(--text-primary); }
-  .tab-item.active {
-    color: var(--brand-blue);
-    border-bottom-color: var(--brand-blue);
-    font-weight: 600;
-  }
+  .tab-item.active { color: var(--brand-blue); border-bottom-color: var(--brand-blue); font-weight: 600; }
 
-  /* Detail container */
   .detail-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: var(--bg-white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
+    max-width: 800px; margin: 0 auto;
+    background: var(--bg-white); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden;
   }
   .detail-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    padding: 16px 24px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
   }
   .detail-header .thread-avatar {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--brand-blue);
-    color: #fff;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--brand-blue); color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    font-weight: 600;
-    flex-shrink: 0;
+    font-size: 14px; font-weight: 600; flex-shrink: 0;
   }
-  .detail-body {
-    padding: 24px;
-    font-size: 14px;
-    line-height: 1.6;
+  .detail-body { padding: 24px; font-size: 14px; line-height: 1.6; }
+  .reply-section { border-top: 1px solid var(--border); padding: 20px 24px; }
+
+  /* Save as Draft button */
+  .btn-draft-outline {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: var(--radius-sm, 6px);
+    font-size: 13px; font-weight: 600; font-family: inherit;
+    cursor: pointer; background: transparent;
+    border: 1.5px solid var(--border, #e5e7eb);
+    color: var(--text-secondary, #6b7280); transition: all 0.12s;
   }
-  .reply-section {
-    border-top: 1px solid var(--border);
-    padding: 20px 24px;
+  .btn-draft-outline:hover {
+    border-color: var(--brand-blue, #2563eb);
+    color: var(--brand-blue, #2563eb);
+    background: #eff6ff;
   }
 </style>
 
 {% include 'messaging/_tabs.html' %}
 
 <div class="detail-container">
+
+  <!-- Message header -->
   <div class="detail-header">
-    <div class="thread-avatar">AR</div>
-    <div>
-      <div style="font-weight: 600;">Alex Rivera</div>
-      <div style="font-size: 12px; color: var(--text-muted);">10:24 AM</div>
+    <div class="thread-avatar">
+      {{ msg.sender.first_name|first|upper }}{{ msg.sender.last_name|first|upper }}
+    </div>
+    <div style="flex:1;">
+      <div style="font-weight:700;font-size:15px;">{{ msg.subject }}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
+        From: <strong>{{ msg.sender.get_full_name|default:msg.sender.username }}</strong>
+        {% if msg.recipient %}
+          &nbsp;·&nbsp; To: <strong>{{ msg.recipient.get_full_name|default:msg.recipient.username }}</strong>
+        {% endif %}
+        &nbsp;·&nbsp; {{ msg.created_at|date:"d M Y, H:i" }}
+        {% if not msg.is_read and request.user == msg.recipient %}
+          <span style="background:#dbeafe;color:#1d4ed8;font-size:10px;padding:1px 6px;border-radius:20px;margin-left:4px;font-weight:600;">UNREAD</span>
+        {% endif %}
+      </div>
+    </div>
+    <!-- Back + Delete actions -->
+    <div style="display:flex;gap:8px;flex-shrink:0;">
+      <a href="javascript:history.back()" class="btn btn-ghost btn-sm">
+        <i class="bi bi-arrow-left"></i> Back
+      </a>
+      <form method="post" action="{% url 'messaging:delete_message' msg.pk %}" onsubmit="return confirm('Delete this message?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-ghost btn-sm" style="color:#ef4444;" title="Delete message">
+          <i class="bi bi-trash"></i> Delete
+        </button>
+      </form>
     </div>
   </div>
-  <div class="detail-body">
-    <p><strong>Hi Team,</strong></p>
-    <p>I hope your week is off to a productive start. I've spent some time distilling our feedback from the last leadership meeting and have mapped out the core pillars for our Q3 strategy.</p>
-    <p>Best regards,<br>Alex Rivera</p>
-  </div>
-  <div class="reply-section">
-    <div style="font-size: 14px; font-weight: 600; margin-bottom: 14px;">Reply</div>
 
-    <!-- ⚠️ Using 'messaging:reply' with the message pk=1 as static placeholder -->
-    <!-- Your real view will pass the actual message.pk to the template -->
-    <form method="post" action="{% url 'messaging:reply' pk=1 %}">
+  <!-- Message body -->
+  <div class="detail-body">
+    {{ msg.body|linebreaks }}
+  </div>
+
+  <!-- Reply section — only shown when the logged-in user is the recipient -->
+  {% if request.user == msg.recipient and msg.status == 'sent' %}
+  <div class="reply-section">
+    <div style="font-size:14px;font-weight:600;margin-bottom:14px;">
+      <i class="bi bi-reply"></i> Reply to {{ msg.sender.get_full_name|default:msg.sender.username }}
+    </div>
+
+    <form method="post" action="{% url 'messaging:reply' pk=msg.pk %}">
       {% csrf_token %}
       <div class="form-group">
-        <textarea class="form-control" name="body" rows="4" placeholder="Write your reply..."></textarea>
+        <textarea class="form-control" name="body" rows="4"
+                  placeholder="Write your reply..." required></textarea>
       </div>
-      <button type="submit" class="btn btn-primary">Send Reply</button>
+      <div style="display:flex;gap:10px;margin-top:12px;align-items:center;">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-send"></i> Send Reply
+        </button>
+        <a href="{% url 'messaging:compose' %}?reply_to={{ msg.pk }}" class="btn-draft-outline">
+          <i class="bi bi-pencil-square"></i> Compose Full Reply
+        </a>
+      </div>
     </form>
   </div>
+  {% endif %}
+
+  <!-- Edit button for drafts owned by sender -->
+  {% if msg.status == 'draft' and request.user == msg.sender %}
+  <div class="reply-section">
+    <a href="{% url 'messaging:compose_draft' msg.pk %}" class="btn btn-primary">
+      <i class="bi bi-pencil"></i> Edit Draft
+    </a>
+  </div>
+  {% endif %}
+
 </div>
 {% endblock %}

@@ -2,6 +2,9 @@
   <a href="{% url 'messaging:inbox' %}"
      class="tab-item {% if request.resolver_match.url_name == 'inbox' %}active{% endif %}">
     Inbox
+    {% if unread_count|default:0 > 0 %}
+      <span style="background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:5px;">{{ unread_count }}</span>
+    {% endif %}
   </a>
   <a href="{% url 'messaging:sent' %}"
      class="tab-item {% if request.resolver_match.url_name == 'sent' %}active{% endif %}">
@@ -11,4 +14,5 @@
      class="tab-item {% if request.resolver_match.url_name == 'drafts' %}active{% endif %}">
     Drafts
   </a>
+  
 </div>
