@@ -1,7 +1,0 @@
-[33m03fc88d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/organisation[m[33m, [m[1;31morigin/feature/organisation[m[33m)[m Add Department, DepartmentLeader, TeamType models
-[33mc8ae049[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m Project setup: apps created, settings configured, templates structure ready
-[33maf3cfa1[m remove unused file
-[33m84b9108[m remove old course project folder
-[33m0395fbf[m test file
-[33mafd9b42[m Add a test file
-[33m55d8e36[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m first commit
