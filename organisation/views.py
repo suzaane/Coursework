@@ -1,8 +1,22 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from .models import Department, TeamType
+from .models import Department, TeamType, DepartmentLeader
 
-# Temporarily remove @login_required for testing
+def dashboard(request):
+    """Dashboard showing summary statistics"""
+    from teams.models import Dependency
+    
+    context = {
+        'department_count': Department.objects.count(),
+        'teamtype_count': TeamType.objects.count(),
+        'leader_count': DepartmentLeader.objects.count(),
+        'dependency_count': Dependency.objects.count(),
+        'departments': Department.objects.all(),
+        'team_types': TeamType.objects.all(),
+    }
+    return render(request, 'organisation/dashboard.html', context)
+
+
 def department_list(request):
     """Show all departments with optional search."""
     query = request.GET.get('q', '')
@@ -60,7 +74,7 @@ def dependency_list(request):
 
 
 def org_chart(request):
-    """Show the organisation chart."""
+    """Show the organisation chart — departments and their teams."""
     departments = Department.objects.prefetch_related('leader').all()
     
     teams_by_department = {}
