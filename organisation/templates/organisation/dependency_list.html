@@ -1,28 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-4">
-  <h2>Team Dependencies</h2>
-  <form method="get" class="mb-3">
-    <select name="direction" class="form-select w-auto d-inline" onchange="this.form.submit()">
-      <option value="">All directions</option>
-      <option value="upstream" {% if selected_direction == 'upstream' %}selected{% endif %}>Upstream</option>
-      <option value="downstream" {% if selected_direction == 'downstream' %}selected{% endif %}>Downstream</option>
-    </select>
-  </form>
-  <table class="table table-bordered">
-    <thead><tr><th>From Team</th><th>Direction</th><th>To Team</th><th>Description</th></tr></thead>
-    <tbody>
-    {% for dep in dependencies %}
-    <tr>
-      <td>{{ dep.from_team }}</td>
-      <td><span class="badge bg-{% if dep.direction == 'upstream' %}warning{% else %}info{% endif %}">{{ dep.direction }}</span></td>
-      <td>{{ dep.to_team }}</td>
-      <td>{{ dep.description }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="4">No dependencies found.</td></tr>
-    {% endfor %}
-    </tbody>
-  </table>
+<div class="dashboard-card">
+    <h2>🔗 Team Dependencies</h2>
+    <p class="text-muted">View upstream and downstream team relationships</p>
+    
+    {% if dependencies %}
+    <table class="table table-striped">
+        <thead>
+            <tr><th>From Team</th><th>To Team</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+        {% for dep in dependencies %}
+        <tr>
+            <td>{{ dep.from_team.name }} → {{ dep.to_team.name }}</td>
+            <td>{{ dep.description }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">No dependencies found.</div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -1,24 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-4">
-  <a href="{% url 'organisation:department_list' %}" class="btn btn-secondary mb-3">← Back to Departments</a>
-  <h2>{{ department.name }}</h2>
-  <p class="text-muted">{{ department.specialisation }}</p>
-  <p>{{ department.description }}</p>
+<div class="dashboard-card">
+    <a href="{% url 'organisation:department_list' %}" class="btn btn-outline-secondary mb-3">← Back to Departments</a>
+    
+    <h2>{{ department.name }}</h2>
+    <p class="text-muted">{{ department.specialisation }}</p>
+    <p>{{ department.description }}</p>
 
-  {% if department.leader %}
-  <div class="card mb-4">
-    <div class="card-header"><strong>Department Leader</strong></div>
-    <div class="card-body">
-      <p>{{ department.leader.name }}</p>
-      <p>{{ department.leader.email }}</p>
+    {% if department.leader %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Department Leader</strong>
+        </div>
+        <div class="card-body">
+            <p><strong>{{ department.leader.name }}</strong></p>
+            <p>Email: {{ department.leader.email }}</p>
+            <p>Phone: {{ department.leader.phone|default:"Not provided" }}</p>
+        </div>
     </div>
-  </div>
-  {% endif %}
+    {% endif %}
 
-  <h4>Teams in this Department</h4>
-  <ul class="list-group">
-    <li class="list-group-item text-muted">No teams assigned yet. (Teams app integration pending)</li>
-  </ul>
+    <h4>Teams in this Department</h4>
+    <div class="list-group">
+        {% for team in teams %}
+        <div class="list-group-item">{{ team.name }}</div>
+        {% empty %}
+        <div class="alert alert-info">No teams assigned yet.</div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

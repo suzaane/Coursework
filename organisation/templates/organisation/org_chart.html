@@ -1,24 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-4">
-  <h2>Organisation Chart</h2>
-  <div class="row">
-    {% for dept in departments %}
-    <div class="col-md-6 mb-4">
-      <div class="card border-primary">
-        <div class="card-header bg-primary text-white">
-          <strong>{{ dept.name }}</strong>
-          {% if dept.leader %} — {{ dept.leader.name }}{% endif %}
+<div class="dashboard-card">
+    <h2>🏢 Organisation Chart</h2>
+    <p class="text-muted">View department structure and team hierarchy</p>
+    
+    <div class="row">
+        {% for dept in departments %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <strong>{{ dept.name }}</strong>
+                    {% if dept.leader %} — {{ dept.leader.name }}{% endif %}
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">{{ dept.specialisation }}</p>
+                    <p>{{ dept.description }}</p>
+                    <hr>
+                    <h6>Teams:</h6>
+                    <ul class="list-group">
+                        {% for team in teams_by_department|default:dept.teams.all %}
+                            {% if team.department.id == dept.id %}
+                            <li class="list-group-item">{{ team.name }}</li>
+                            {% endif %}
+                        {% empty %}
+                            <li class="list-group-item text-muted">No teams assigned</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-          <p class="text-muted">{{ dept.specialisation }}</p>
-          <p>{{ dept.description }}</p>
-        </div>
-      </div>
+        {% empty %}
+        <p>No departments found.</p>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>No departments found.</p>
-    {% endfor %}
-  </div>
 </div>
 {% endblock %}

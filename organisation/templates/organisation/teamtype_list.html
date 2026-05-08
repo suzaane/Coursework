@@ -1,26 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-4">
-  <h2>Team Types</h2>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for tt in team_types %}
-      <tr>
-        <td>{{ tt.name }}</td>
-        <td>{{ tt.description }}</td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="2">No team types found. Add some in admin.</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+<div class="dashboard-card">
+    <h2>🏷️ Team Types</h2>
+    <p class="text-muted">Categorise engineering teams by type</p>
+    
+    <div class="row">
+        {% for tt in team_types %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ tt.name }}</h5>
+                    <p class="card-text">{{ tt.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No team types found. <a href="/admin/organisation/teamtype/add/">Add some</a></p>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
