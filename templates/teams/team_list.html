@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+<div class="container mt-4">
+    <!-- Header with icon -->
+    <div class="mb-4">
+        <h1 style="font-size: 1.875rem; font-weight: 600; color: #1e293b;">
+            <i class="fas fa-users" style="color: #3b82f6;"></i> Engineering Teams
+        </h1>
+    </div>
+    
+    <!-- Search and Filter Section - Figma style -->
+    <div class="search-section">
+        <form method="GET" class="row g-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" name="q" class="form-control border-start-0" 
+                           placeholder="Search teams by name, department..." value="{{ query }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="skill" class="form-select" onchange="this.form.submit()">
+                    <option value="">All departments</option>
+                    {% for skill in skills %}
+                        <option value="{{ skill.id }}" {% if request.GET.skill == skill.id|stringformat:'s' %}selected{% endif %}>
+                            {{ skill.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" onchange="this.form.submit()">
+                    <option value="">Sort by A-Z</option>
+                    <option value="az">A to Z</option>
+                    <option value="za">Z to A</option>
+                </select>
+            </div>
+            {% if request.GET.skill or request.GET.q %}
+            <div class="col-12">
+                <a href="{% url 'teams:team_list' %}" class="btn btn-link text-decoration-none">
+                    <i class="fas fa-times"></i> Clear filters
+                </a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+    
+    <!-- Teams Grid - Figma style cards -->
+    <div class="row">
+        {% for team in teams %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="team-card">
+                <div class="team-icon">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                <h3>{{ team.name }}</h3>
+                <p class="managed-by">Managed by {{ team.manager.username|default:"Not assigned" }}</p>
+                <p class="description">{{ team.description|truncatewords:25 }}</p>
+                
+                <!-- Skills badges -->
+                {% if team.skills.all %}
+                    <div class="mt-2 mb-3">
+                        {% for skill in team.skills.all|slice:":3" %}
+                            <span class="badge" style="background-color: #e2e8f0; color: #475569; font-weight: 500; margin-right: 6px; padding: 4px 10px;">
+                                {{ skill.name }}
+                            </span>
+                        {% endfor %}
+                        {% if team.skills.all.count > 3 %}
+                            <span class="badge" style="background-color: #f1f5f9; color: #64748b;">+{{ team.skills.all.count|add:"-3" }} more</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <!-- Projects count badge -->
+                {% if team.concurrent_projects > 0 %}
+                    <div class="mb-3">
+                        {% with projects=team.concurrent_projects|default:0 %}
+                            {% if projects > 5 %}
+                                <span class="badge" style="background-color: #ef4444; color: white; padding: 4px 10px;">
+                            {% elif projects > 3 %}
+                                <span class="badge" style="background-color: #f59e0b; color: white; padding: 4px 10px;">
+                            {% else %}
+                                <span class="badge" style="background-color: #10b981; color: white; padding: 4px 10px;">
+                            {% endif %}
+                                <i class="fas fa-chart-line"></i> {{ projects }} projects
+                            </span>
+                        {% endwith %}
+                    </div>
+                {% endif %}
+                
+                <a href="{% url 'teams:team_detail' team.id %}" class="btn-view">
+                    View Details →
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info" style="border-radius: 12px;">
+                <i class="fas fa-info-circle"></i> No teams found. 
+                <a href="/admin/teams/team/add/" class="alert-link">Add a team</a> in the admin panel.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

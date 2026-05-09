@@ -1,12 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Register – Broadcast Portal</title>
-</head>
-<body class="p-5">
-  <h2>Register (placeholder)</h2>
-  <p>Auth lead will provide full version.</p>
-  <a href="{% url 'accounts:login' %}">Back to Login</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block auth_content %}
+<div class="login-card">
+    <h2>Create Account</h2>
+    <p class="subtitle">Sign up to get started</p>
+    
+    <!-- Display form errors -->
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <strong>Please correct the following errors:</strong>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                   value="{{ form.username.value|default:'' }}" required>
+            {% if form.username.errors %}
+                <div class="invalid-feedback">{{ form.username.errors.0 }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                   value="{{ form.email.value|default:'' }}" required>
+            {% if form.email.errors %}
+                <div class="invalid-feedback">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select name="role" class="form-control {% if form.role.errors %}is-invalid{% endif %}">
+                <option value="engineer" {% if form.role.value == 'engineer' %}selected{% endif %}>Engineer</option>
+                <option value="team_leader" {% if form.role.value == 'team_leader' %}selected{% endif %}>Team Leader</option>
+                <option value="dept_leader" {% if form.role.value == 'dept_leader' %}selected{% endif %}>Department Leader</option>
+                <option value="senior_manager" {% if form.role.value == 'senior_manager' %}selected{% endif %}>Senior Manager</option>
+            </select>
+            {% if form.role.errors %}
+                <div class="invalid-feedback">{{ form.role.errors.0 }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Phone (Optional)</label>
+            <input type="text" name="phone" class="form-control" value="{{ form.phone.value|default:'' }}">
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Department (Optional)</label>
+            <input type="text" name="department" class="form-control" value="{{ form.department.value|default:'' }}">
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" name="password1" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" required>
+            {% if form.password1.errors %}
+                <div class="invalid-feedback">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" name="password2" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" required>
+            {% if form.password2.errors %}
+                <div class="invalid-feedback">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-100">Create Account</button>
+    </form>
+    
+    <div class="text-center mt-3">
+        Already have an account? <a href="{% url 'accounts:login' %}">Login</a>
+    </div>
+</div>
+{% endblock %}

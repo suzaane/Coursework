@@ -37,13 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Our project apps
     'accounts',
     'teams',
     'organisation',
     'messaging',
     'schedule',
 ]
+
+AUTH_USER_MODEL = 'accounts.User'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,6 +58,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'broadcast_portal.urls'
 
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -66,11 +70,12 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'messaging.context_processors.unread_message_count',
+                'messaging.context_processors.unread_message_count', 
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'broadcast_portal.wsgi.application'
 
