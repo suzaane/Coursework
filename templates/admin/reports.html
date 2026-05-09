@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .report-card {
+        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    .report-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+    .report-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+    .report-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .report-desc {
+        color: #666;
+        margin-bottom: 20px;
+    }
+    .btn-export {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-export:hover {
+        transform: scale(1.02);
+        color: white;
+        box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+    }
+    .btn-outline-export {
+        background: transparent;
+        border: 2px solid #667eea;
+        color: #667eea;
+        padding: 10px 25px;
+        border-radius: 30px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+    }
+    .btn-outline-export:hover {
+        background: #667eea;
+        color: white;
+    }
+    .header-section {
+        margin-bottom: 30px;
+    }
+    .header-section h1 {
+        font-size: 32px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="header-section">
+        <h1>📋 Reports Center</h1>
+        <p style="color: #666; font-size: 16px;">Export and analyse your organisation data</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="report-card">
+                <div class="report-icon">🏢</div>
+                <div class="report-title">Departments Report</div>
+                <div class="report-desc">Export all department data including names, descriptions, specialisations, and timestamps.</div>
+                <a href="/admin/organisation/department/" class="btn-export">
+                    📊 Generate Report → 
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="report-card">
+                <div class="report-icon">🏷️</div>
+                <div class="report-title">Team Types Report</div>
+                <div class="report-desc">Export all team type categories and their descriptions.</div>
+                <a href="/admin/organisation/teamtype/" class="btn-export">
+                    📊 Generate Report → 
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="report-card">
+                <div class="report-icon">👥</div>
+                <div class="report-title">Department Leaders Report</div>
+                <div class="report-desc">Export leadership data including names, emails, and phone numbers.</div>
+                <a href="/admin/organisation/departmentleader/" class="btn-export">
+                    📊 Generate Report → 
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="report-card">
+                <div class="report-icon">📦</div>
+                <div class="report-title">Statistics Dashboard</div>
+                <div class="report-desc">View visual statistics and charts of your organisation data.</div>
+                <a href="/organisation/admin-stats/" class="btn-export">
+                    📈 View Statistics → 
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="report-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div style="font-size: 20px; font-weight: 700; margin-bottom: 10px;">💡 Pro Tip</div>
+                <div style="opacity: 0.9;">In each section, select items and use the "Export selected items to CSV" action from the dropdown menu.</div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div style="font-size: 48px;">📥</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
