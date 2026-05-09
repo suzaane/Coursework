@@ -3,6 +3,7 @@ from django.db.models import Q
 from .models import Department, TeamType, DepartmentLeader
 
 def dashboard(request):
+    """Dashboard showing summary statistics"""
     dependency_count = 0
     team_count = 0
     try:
@@ -23,7 +24,9 @@ def dashboard(request):
     }
     return render(request, 'organisation/dashboard.html', context)
 
+
 def department_list(request):
+    """Show all departments with optional search."""
     query = request.GET.get('q', '')
     departments = Department.objects.all()
     if query:
@@ -37,7 +40,9 @@ def department_list(request):
         'query': query,
     })
 
+
 def department_detail(request, pk):
+    """Show a single department with its leader and teams."""
     department = get_object_or_404(Department, pk=pk)
     teams = department.get_teams()
     return render(request, 'organisation/department_detail.html', {
@@ -46,27 +51,34 @@ def department_detail(request, pk):
         'team_count': len(teams),
     })
 
+
 def teamtype_list(request):
+    """Show all team types."""
     team_types = TeamType.objects.all()
     return render(request, 'organisation/teamtype_list.html', {
         'team_types': team_types,
     })
 
+
 def dependency_list(request):
-    direction = request.GET.get('direction', '')
-    dependencies = []
+    """Show team dependencies in card layout (dynamic)."""
     try:
-        from teams.models import Dependency
-        dependencies = Dependency.objects.all()
+        from teams.models import Team, Dependency
+        all_teams = Team.objects.all()
+        dependencies = Dependency.objects.select_related('from_team', 'to_team').all()
     except ImportError:
-        pass
+        all_teams = []
+        dependencies = []
     return render(request, 'organisation/dependency_list.html', {
+        'all_teams': all_teams,
         'dependencies': dependencies,
-        'selected_direction': direction,
     })
 
+
 def org_chart(request):
+    """Show organisation chart with departments and teams."""
     departments = Department.objects.prefetch_related('leader').all()
+    
     org_data = []
     total_teams = 0
     for dept in departments:
@@ -78,12 +90,14 @@ def org_chart(request):
             'teams': teams,
             'team_count': team_count
         })
+    
     dependency_count = 0
     try:
         from teams.models import Dependency
         dependency_count = Dependency.objects.count()
     except ImportError:
         pass
+    
     return render(request, 'organisation/org_chart.html', {
         'org_data': org_data,
         'total_departments': departments.count(),
@@ -91,8 +105,9 @@ def org_chart(request):
         'dependency_count': dependency_count,
     })
 
-# NEW: Statistics page
+
 def admin_statistics(request):
+    """Statistics page for admin."""
     context = {
         'department_count': Department.objects.count(),
         'teamtype_count': TeamType.objects.count(),
@@ -100,8 +115,9 @@ def admin_statistics(request):
     }
     return render(request, 'admin/statistics.html', context)
 
-# NEW: Reports page
+
 def admin_reports(request):
+    """Reports page for admin."""
     context = {
         'departments': Department.objects.all(),
         'teamtypes': TeamType.objects.all(),
