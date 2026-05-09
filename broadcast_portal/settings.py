@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Our project apps
-    'accounts',
+    # 'accounts',  # TEMPORARILY DISABLED - Fix User model conflict
     'teams',
     'organisation',
     'messaging',
