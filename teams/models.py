@@ -35,7 +35,7 @@ class Team(models.Model):
 
     # Basic information
     name = models.CharField(max_length=200)
-    # department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
+    department = models.CharField(max_length=200, blank=True, null=True)
     manager = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     description = models.TextField(help_text="Team mission and responsibilities")
     
