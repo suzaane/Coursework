@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'organisation',
     'messaging',
     'schedule',
+    'core',
 ]
 
 MIDDLEWARE = [
