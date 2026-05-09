@@ -14,7 +14,7 @@ def inbox(request):
     """Show all received sent messages that haven't been deleted by recipient."""
     msgs = Message.objects.filter(
         recipient=request.user,
-        status='sent',
+        is_draft=False,
         deleted_by_recipient=False
     )
     unread_count = msgs.filter(is_read=False).count()
@@ -32,7 +32,7 @@ def sent(request):
     """Show all messages sent by the current user."""
     msgs = Message.objects.filter(
         sender=request.user,
-        status='sent',
+        is_draft=False,
         deleted_by_sender=False
     )
     return render(request, 'messaging/sent.html', {
@@ -48,7 +48,7 @@ def drafts(request):
     """Show all draft messages saved by the current user."""
     msgs = Message.objects.filter(
         sender=request.user,
-        status='draft'
+        is_draft=True
     )
     return render(request, 'messaging/drafts.html', {
         'messages_list': msgs,
@@ -66,7 +66,7 @@ def compose(request, draft_id=None):
     """
     instance = None
     if draft_id:
-        instance = get_object_or_404(Message, pk=draft_id, sender=request.user, status='draft')
+        instance = get_object_or_404(Message, pk=draft_id, sender=request.user, is_draft=True)
 
     if request.method == 'POST':
         form = ComposeMessageForm(request.POST, instance=instance, current_user=request.user)
@@ -80,13 +80,13 @@ def compose(request, draft_id=None):
                 if not msg.recipient:
                     form.add_error('recipient', 'A recipient is required to send a message.')
                 else:
-                    msg.status = 'sent'
+                    msg.is_draft = False
                     msg.save()
                     django_messages.success(request, 'Message sent successfully.')
                     return redirect('messaging:sent')
 
             elif action == 'draft':
-                msg.status = 'draft'
+                msg.is_draft = True
                 msg.save()
                 django_messages.success(request, 'Draft saved.')
                 return redirect('messaging:drafts')
