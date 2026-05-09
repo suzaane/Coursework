@@ -1,6 +1,4 @@
 # Virtual environment - never upload this
-env/
-.env/
 venv/
 
 # Database - each person has their own local one
