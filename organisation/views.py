@@ -69,7 +69,6 @@ def dependency_list(request):
     except ImportError:
         all_teams = []
         dependencies = []
-    
     return render(request, 'organisation/dependency_list.html', {
         'all_teams': all_teams,
         'dependencies': dependencies,

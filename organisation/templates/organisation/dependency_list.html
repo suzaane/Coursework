@@ -170,6 +170,7 @@
 <div class="deps-container">
     <div class="page-header">
         <h1><i class="fas fa-code-branch"></i> Engineering Team Dependencies</h1>
+        <p>Visualise upstream providers and downstream consumers for each team</p>
     </div>
 
     <div class="filter-bar" id="filterBar">
@@ -196,9 +197,10 @@
                                 <div class="item-desc">{{ dep.description|default:"Provides service to this team" }}</div>
                             </div>
                             {% endif %}
-                        {% empty %}
-                            <div class="provider-item" style="color:#999;">No upstream providers</div>
                         {% endfor %}
+                        {% if not dependencies|length or not team.get_upstream_dependencies %}
+                        <div class="provider-item" style="color:#999;">No upstream providers</div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="dep-section">
@@ -211,9 +213,10 @@
                                 <div class="item-desc">{{ dep.description|default:"Depends on this team" }}</div>
                             </div>
                             {% endif %}
-                        {% empty %}
-                            <div class="consumer-item" style="color:#999;">No downstream consumers</div>
                         {% endfor %}
+                        {% if not dependencies|length or not team.get_downstream_dependencies %}
+                        <div class="consumer-item" style="color:#999;">No downstream consumers</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -240,17 +243,31 @@
             
             teamCards.forEach(card => {
                 const teamId = card.getAttribute('data-team');
+                const upstreamSection = card.querySelector('.dep-section:first-child');
+                const downstreamSection = card.querySelector('.dep-section:last-child');
                 const upstreamList = document.getElementById(`upstream-${teamId}`);
                 const downstreamList = document.getElementById(`downstream-${teamId}`);
-                const hasUpstream = upstreamList && upstreamList.children.length > 0;
-                const hasDownstream = downstreamList && downstreamList.children.length > 0;
+                const hasUpstream = upstreamList && upstreamList.children.length > 0 && !upstreamList.innerHTML.includes('No upstream providers');
+                const hasDownstream = downstreamList && downstreamList.children.length > 0 && !downstreamList.innerHTML.includes('No downstream consumers');
                 
                 if (filter === 'all') {
                     card.style.display = 'block';
+                    upstreamSection.style.display = 'block';
+                    downstreamSection.style.display = 'block';
                 } else if (filter === 'upstream') {
+                    // Show card only if it has upstream dependencies
                     card.style.display = hasUpstream ? 'block' : 'none';
+                    if (hasUpstream) {
+                        upstreamSection.style.display = 'block';
+                        downstreamSection.style.display = 'none';
+                    }
                 } else if (filter === 'downstream') {
+                    // Show card only if it has downstream dependencies
                     card.style.display = hasDownstream ? 'block' : 'none';
+                    if (hasDownstream) {
+                        upstreamSection.style.display = 'none';
+                        downstreamSection.style.display = 'block';
+                    }
                 }
             });
         });
