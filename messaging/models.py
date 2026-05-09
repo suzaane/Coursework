@@ -1,12 +1,15 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-User = get_user_model()  # uses your custom accounts.User
+User = get_user_model()
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
-    subject = models.CharField(max_length=200)
+    recipient = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='received_messages',
+        null=True, blank=True
+    )
+    subject = models.CharField(max_length=255)
     body = models.TextField()
     is_read = models.BooleanField(default=False)
     is_draft = models.BooleanField(default=False)
