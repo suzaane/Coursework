@@ -1,23 +1,195 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="dashboard-card">
-    <h2><i class="fas fa-tags"></i> Team Types</h2>
-    <p class="text-muted">Categorise engineering teams by type</p>
+
+<style>
+    .teamtypes-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
     
-    <div class="row">
+    .page-header {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+    
+    .page-header p {
+        color: #666;
+        margin-top: 5px;
+    }
+    
+    .btn-add {
+        background: linear-gradient(135deg, #0f3460, #16213e);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 30px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(15,52,96,0.3);
+        color: white;
+    }
+    
+    .teamtypes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+    }
+    
+    .teamtype-card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+        border: 1px solid #eee;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .teamtype-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border-color: #0f3460;
+    }
+    
+    .teamtype-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+    
+    .teamtype-name {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+    }
+    
+    .teamtype-description {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+    
+    .teamtype-stats {
+        display: flex;
+        gap: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    
+    .stat-badge {
+        background: #f0f2f5;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: #0f3460;
+        font-weight: 500;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 20px;
+    }
+    
+    .empty-icon {
+        font-size: 64px;
+        color: #ccc;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+        margin: 0 0 10px;
+        color: #666;
+    }
+    
+    .empty-state p {
+        color: #999;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state a {
+        color: #0f3460;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .teamtype-card {
+        animation: fadeIn 0.4s ease forwards;
+    }
+</style>
+
+<div class="teamtypes-container">
+    <div class="page-header">
+        <div>
+            <h1><i class="fas fa-tags"></i> Team Types</h1>
+            <p>Categorise engineering teams by their primary function</p>
+        </div>
+        <a href="/admin/organisation/teamtype/add/" class="btn-add">
+            <i class="fas fa-plus"></i> Add Team Type
+        </a>
+    </div>
+    
+    <div class="teamtypes-grid">
         {% for tt in team_types %}
-        <div class="col-md-4 mb-3">
-            <div class="team-card text-center">
-                <i class="fas fa-tag fa-3x text-primary mb-2"></i>
-                <h4>{{ tt.name }}</h4>
-                <p class="text-muted">{{ tt.description|default:"No description" }}</p>
+        <div class="teamtype-card" style="animation-delay: {{ forloop.counter0|add:1 }}00ms;">
+            <div class="teamtype-icon">
+                {% if tt.name == "Platform" %}🏗️
+                {% elif tt.name == "Product" %}📱
+                {% elif tt.name == "QA" %}🔍
+                {% elif tt.name == "Security" %}🔒
+                {% elif tt.name == "Data" %}📊
+                {% elif tt.name == "DevOps" }}⚙️
+                {% else %}🏷️
+                {% endif %}
+            </div>
+            <div class="teamtype-name">{{ tt.name }}</div>
+            <div class="teamtype-description">{{ tt.description|default:"No description provided." }}</div>
+            <div class="teamtype-stats">
+                <span class="stat-badge">
+                    <i class="fas fa-users"></i> 0 teams
+                </span>
+                <span class="stat-badge">
+                    <i class="fas fa-edit"></i> Manage
+                </span>
             </div>
         </div>
         {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info">No team types found. <a href="/admin/organisation/teamtype/add/">Add some</a></div>
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-tags"></i>
+            </div>
+            <h3>No Team Types Found</h3>
+            <p>Team types help categorise engineering teams (e.g., Platform, Product, QA)</p>
+            <a href="/admin/organisation/teamtype/add/">➕ Add your first team type</a>
         </div>
         {% endfor %}
     </div>
 </div>
+
 {% endblock %}
