@@ -13,5 +13,3 @@ admin.site.register(Team)
 admin.site.register(TeamMember)
 admin.site.register(Dependency)
 admin.site.register(Skill)
-
-
