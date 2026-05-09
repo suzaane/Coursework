@@ -1,29 +1,20 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class Message(models.Model):
-    STATUS_CHOICES = [
-        ('sent', 'Sent'),
-        ('draft', 'Draft'),
-    ]
-
-    sender = models.ForeignKey(
-        User, related_name='sent_messages', on_delete=models.CASCADE
-    )
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     recipient = models.ForeignKey(
-        User, related_name='received_messages', on_delete=models.CASCADE,
+        User, on_delete=models.CASCADE, related_name='received_messages',
         null=True, blank=True
     )
     subject = models.CharField(max_length=255)
     body = models.TextField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
     is_read = models.BooleanField(default=False)
-
-    # Soft-delete: both sides can delete independently
+    is_draft = models.BooleanField(default=False)
     deleted_by_sender = models.BooleanField(default=False)
     deleted_by_recipient = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -31,4 +22,4 @@ class Message(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"[{self.status.upper()}] {self.subject} | {self.sender} to {self.recipient}"
+        return f"{self.sender} → {self.recipient}: {self.subject}"
