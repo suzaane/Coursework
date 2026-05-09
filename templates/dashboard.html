@@ -12,7 +12,6 @@
   </div>
 </div>
 
-
 <!-- ── STAT CARDS + QUICK ACTIONS ── -->
 <div class="stats-row">
 
@@ -57,20 +56,18 @@
       Send Message
       <i class="bi bi-chevron-right qa-chevron"></i>
     </a>
-    <a href="#" class="qa-btn secondary">
+    <a href="{% url 'schedule:new_meeting' %}" class="qa-btn secondary">
       <i class="bi bi-calendar-plus"></i>
       Schedule Meeting
       <i class="bi bi-chevron-right qa-chevron"></i>
     </a>
-    <a href="#" class="qa-btn secondary">
+    <a href="{% url 'organisation:org_chart' %}" class="qa-btn secondary">
       <i class="bi bi-diagram-3"></i>
       Organisation Chart
       <i class="bi bi-chevron-right qa-chevron"></i>
     </a>
   </div>
-
 </div>
-
 
 <!-- ── MIDDLE ROW ── -->
 <div class="dashboard-grid">
@@ -79,7 +76,7 @@
   <div class="card">
     <div class="card-header">
       <span class="card-title">Recently Viewed Teams</span>
-      <a href="#" class="link-all">View all <i class="bi bi-arrow-right"></i></a>
+      <a href="{% url 'teams:team_list' %}" class="link-all">View all <i class="bi bi-arrow-right"></i></a>
     </div>
     <div class="card-body p-0">
       {% if recent_teams %}
@@ -175,9 +172,7 @@
       {% endif %}
     </div>
   </div>
-
 </div>
-
 
 <!-- ── RECENT ACTIVITY ── -->
 <div class="section-header">
@@ -229,34 +224,4 @@
   </div>
 </div>
 
-{% endblock content %}
-=======
-
-{% block content %}
-<div class="container mt-4">
-    <h1>Dashboard</h1>
-    <p>Welcome, {{ user.username }}!</p>
-    
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Teams</h5>
-                    <p class="card-text">View all engineering teams</p>
-                    <a href="{% url 'teams:team_list' %}" class="btn btn-light">Go to Teams</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">My Profile</h5>
-                    <p class="card-text">Update your profile information</p>
-                    <a href="{% url 'accounts:profile' %}" class="btn btn-light">View Profile</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
->>>>>>> origin/develop
