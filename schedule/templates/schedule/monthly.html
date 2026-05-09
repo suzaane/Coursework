@@ -1,0 +1,52 @@
+{% extends 'base_schedule.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="topbar">
+    <h1>📅 Monthly Calendar • {{ month_name }} {{ current_year }}</h1>
+    <div class="flex gap-2">
+        <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn btn-secondary btn-sm">◀ Previous</a>
+        <a href="?year={{ next_year }}&month={{ next_month }}" class="btn btn-secondary btn-sm">Next ▶</a>
+        <a href="{% url 'schedule:schedule_meeting' %}" class="btn btn-primary btn-sm">+ New Meeting</a>
+    </div>
+</div>
+<div class="content">
+    <div class="card">
+        <div class="card-body">
+            <table style="width:100%; border-collapse:collapse; text-align:center;">
+                <thead>
+                    <tr style="border-bottom:1px solid var(--border);">
+                        <th style="padding:12px;">Mon</th><th style="padding:12px;">Tue</th>
+                        <th style="padding:12px;">Wed</th><th style="padding:12px;">Thu</th>
+                        <th style="padding:12px;">Fri</th><th style="padding:12px;">Sat</th>
+                        <th style="padding:12px;">Sun</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for week in calendar_grid %}
+                        <tr style="border-bottom:1px solid var(--border);">
+                            {% for day in week %}
+                                {% if day == 0 %}
+                                    <td style="padding:8px; background:var(--surface2); opacity:0.5;">–</td>
+                                {% else %}
+                                    <td style="padding:8px; vertical-align:top;">
+                                        <strong>{{ day }}</strong>
+                                        {% if meetings_by_date and day in meetings_by_date %}
+                                            {% for meeting in meetings_by_date|get_item:day %}
+                                                <div style="background:var(--accent-lt); margin-top:6px; padding:4px; border-radius:6px; font-size:10px;">
+                                                    {{ meeting.start_time|time:"H:i" }}<br>
+                                                    <strong>{{ meeting.title|truncatechars:12 }}</strong>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

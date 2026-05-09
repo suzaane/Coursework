@@ -1,0 +1,40 @@
+{% extends 'base_schedule.html' %}
+
+{% block content %}
+<div class="topbar">
+    <h1>⏰ Upcoming Meetings</h1>
+    <a href="{% url 'schedule:schedule_meeting' %}" class="btn btn-primary btn-sm">+ Schedule Meeting</a>
+</div>
+<div class="content">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Next meetings</span>
+        </div>
+        <div class="card-body">
+            {% if meetings %}
+                {% for meeting in meetings %}
+                <div style="border-bottom:1px solid var(--border); padding:16px 0; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3 style="font-size:15px; margin-bottom:6px;">{{ meeting.title }}</h3>
+                        <div style="display:flex; gap:16px; font-size:12px; color:var(--text-dim);">
+                            <span>📅 {{ meeting.meeting_date|date:"F j, Y" }}</span>
+                            <span>⏰ {{ meeting.start_time|time:"H:i" }}</span>
+                            <span class="platform-pill">{{ meeting.get_platform_display }}</span>
+                        </div>
+                        {% if meeting.agenda %}
+                            <p style="font-size:12px; margin-top:8px;">{{ meeting.agenda|truncatewords:20 }}</p>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'schedule:cancel_meeting' meeting.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Cancel this meeting?')">Cancel</a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <h3>No upcoming meetings</h3>
+                    <p>Click "Schedule Meeting" to create one.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 25px;
+        color: white;
+        margin-bottom: 20px;
+        transition: transform 0.3s;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    .stats-number {
+        font-size: 48px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    .stats-label {
+        font-size: 14px;
+        opacity: 0.9;
+        letter-spacing: 1px;
+    }
+    .stats-icon {
+        font-size: 40px;
+        opacity: 0.3;
+        float: right;
+    }
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    }
+    .chart-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #333;
+        border-left: 4px solid #667eea;
+        padding-left: 15px;
+    }
+    .stat-item {
+        margin-bottom: 25px;
+    }
+    .stat-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #555;
+    }
+    .stat-value {
+        float: right;
+        font-weight: bold;
+        color: #667eea;
+    }
+    .progress-bar-custom {
+        height: 30px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        padding-left: 15px;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .bar-primary { background: linear-gradient(90deg, #667eea, #764ba2); width: 100%; }
+    .bar-success { background: linear-gradient(90deg, #11998e, #38ef7d); width: 100%; }
+    .bar-warning { background: linear-gradient(90deg, #f093fb, #f5576c); width: 100%; }
+    .stats-table {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    .stats-table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        border: none;
+    }
+    .stats-table td {
+        padding: 12px 15px;
+        vertical-align: middle;
+    }
+    .badge-count {
+        background: #667eea;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+    .percentage {
+        font-size: 14px;
+        color: #667eea;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container mt-4">
+    <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 5px;">📊 Analytics Dashboard</h1>
+    <p style="color: #666; margin-bottom: 30px;">Real-time organisation statistics and insights</p>
+    
+    <!-- Stats Cards Row -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="stats-card">
+                <div class="stats-icon">🏢</div>
+                <div class="stats-label">TOTAL DEPARTMENTS</div>
+                <div class="stats-number">{{ department_count }}</div>
+                <div style="font-size: 12px; opacity: 0.8;">Active business units</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                <div class="stats-icon">🏷️</div>
+                <div class="stats-label">TEAM TYPES</div>
+                <div class="stats-number">{{ teamtype_count }}</div>
+                <div style="font-size: 12px; opacity: 0.8;">Team categories</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                <div class="stats-icon">👥</div>
+                <div class="stats-label">DEPARTMENT LEADERS</div>
+                <div class="stats-number">{{ leader_count }}</div>
+                <div style="font-size: 12px; opacity: 0.8;">Leadership team</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section - Fixed alignment -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-card">
+                <div class="chart-title">📈 Department Distribution</div>
+                
+                <div class="stat-item">
+                    <div class="stat-label">
+                        Departments 
+                        <span class="stat-value">{{ department_count }} ({{ department_count }}0%)</span>
+                    </div>
+                    <div class="progress" style="height: 30px; border-radius: 15px;">
+                        <div class="progress-bar bg-primary" style="width: {{ department_count }}0%; border-radius: 15px;">
+                            {{ department_count }} Departments
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-label">
+                        Team Types 
+                        <span class="stat-value">{{ teamtype_count }} ({{ teamtype_count }}0%)</span>
+                    </div>
+                    <div class="progress" style="height: 30px; border-radius: 15px;">
+                        <div class="progress-bar bg-success" style="width: {{ teamtype_count }}0%; border-radius: 15px;">
+                            {{ teamtype_count }} Team Types
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-label">
+                        Department Leaders 
+                        <span class="stat-value">{{ leader_count }} ({{ leader_count }}0%)</span>
+                    </div>
+                    <div class="progress" style="height: 30px; border-radius: 15px;">
+                        <div class="progress-bar bg-warning" style="width: {{ leader_count }}0%; border-radius: 15px;">
+                            {{ leader_count }} Leaders
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="chart-card">
+                <div class="chart-title">📊 Quick Stats</div>
+                <table style="width: 100%;">
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px 0;"><strong>🏢 Departments</strong></td>
+                        <td style="padding: 12px 0; text-align: right;"><span class="badge-count">{{ department_count }}</span></td>
+                        <td style="padding: 12px 0; text-align: right;"><span class="percentage">{{ department_count }}0%</span></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px 0;"><strong>🏷️ Team Types</strong></td>
+                        <td style="padding: 12px 0; text-align: right;"><span class="badge-count">{{ teamtype_count }}</span></td>
+                        <td style="padding: 12px 0; text-align: right;"><span class="percentage">{{ teamtype_count }}0%</span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 0;"><strong>👥 Leaders</strong></td>
+                        <td style="padding: 12px 0; text-align: right;"><span class="badge-count">{{ leader_count }}</span></td>
+                        <td style="padding: 12px 0; text-align: right;"><span class="percentage">{{ leader_count }}0%</span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Summary Table -->
+    <div class="stats-table">
+        <table class="table" style="margin-bottom: 0;">
+            <thead>
+                <tr>
+                    <th>📋 Category</th>
+                    <th>🔢 Count</th>
+                    <th>📊 Percentage of Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Departments</strong><br><small style="color: #888;">Business units</small></td>
+                    <td><span class="badge-count">{{ department_count }}</span></td>
+                    <td>{{ department_count }}0%</td>
+                </tr>
+                <tr>
+                    <td><strong>Team Types</strong><br><small style="color: #888;">Team categories</small></td>
+                    <td><span class="badge-count">{{ teamtype_count }}</span></td>
+                    <td>{{ teamtype_count }}0%</td>
+                </tr>
+                <tr>
+                    <td><strong>Department Leaders</strong><br><small style="color: #888;">Leadership</small></td>
+                    <td><span class="badge-count">{{ leader_count }}</span></td>
+                    <td>{{ leader_count }}0%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

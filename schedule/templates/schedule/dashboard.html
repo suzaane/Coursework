@@ -1,0 +1,43 @@
+{% extends 'base_schedule.html' %}
+
+{% block content %}
+<div class="topbar">
+    <h1>📊 Schedule Dashboard</h1>
+    <div class="flex gap-2">
+        <a href="{% url 'schedule:monthly' %}" class="btn btn-secondary btn-sm">📅 Monthly</a>
+        <a href="{% url 'schedule:weekly' %}" class="btn btn-secondary btn-sm">📆 Weekly</a>
+        <a href="{% url 'schedule:upcoming' %}" class="btn btn-secondary btn-sm">⏰ Upcoming</a>
+    </div>
+</div>
+<div class="content">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">📋 Upcoming Meetings</span>
+            <a href="{% url 'schedule:schedule_meeting' %}" class="btn btn-primary btn-sm">+ Schedule</a>
+        </div>
+        <div class="card-body">
+            {% if upcoming_meetings %}
+                {% for meeting in upcoming_meetings %}
+                <div style="border-bottom:1px solid var(--border); padding:12px 0; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong>{{ meeting.title }}</strong>
+                        <div style="font-size:12px; color:var(--text-dim); margin-top:4px;">
+                            {{ meeting.meeting_date|date:"l, M d, Y" }} at {{ meeting.start_time|time:"H:i" }}
+                            <span class="platform-pill" style="margin-left:8px;">
+                                {{ meeting.get_platform_display }}
+                            </span>
+                        </div>
+                    </div>
+                    <a href="{% url 'schedule:cancel_meeting' meeting.id %}" class="btn btn-danger btn-sm">Cancel</a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <h3>No upcoming meetings</h3>
+                    <p>Schedule your first meeting using the button above.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

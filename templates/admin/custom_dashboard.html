@@ -1,0 +1,130 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Admin Dashboard</h1>
+    <p>Welcome to the Broadcast Portal Admin Panel</p>
+    
+    <!-- Menu Items -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📋 Admin Menu</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="/admin/organisation/department/" class="btn btn-outline-primary w-100">
+                                🏢 Manage Departments
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/admin/organisation/teamtype/" class="btn btn-outline-primary w-100">
+                                🏷️ Manage Team Types
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/admin/organisation/departmentleader/" class="btn btn-outline-primary w-100">
+                                👥 Manage Leaders
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/admin/auth/user/" class="btn btn-outline-primary w-100">
+                                👤 Manage Users
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/admin/auth/group/" class="btn btn-outline-primary w-100">
+                                🔐 Manage Groups
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/admin/teams/team/" class="btn btn-outline-primary w-100">
+                                👥 Manage Teams
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="/admin/teams/dependency/" class="btn btn-outline-primary w-100">
+                                🔗 Manage Dependencies
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    <h2>{{ department_count }}</h2>
+                    <p>Departments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <h2>{{ teamtype_count }}</h2>
+                    <p>Team Types</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <h2>{{ leader_count }}</h2>
+                    <p>Leaders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center bg-danger text-white">
+                <div class="card-body">
+                    <h2>{{ user_count }}</h2>
+                    <p>Users</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Items -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Departments</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for dept in recent_departments %}
+                            <li class="list-group-item">{{ dept.name }}</li>
+                        {% empty %}
+                            <li class="list-group-item">No departments yet</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Team Types</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for tt in recent_teamtypes %}
+                            <li class="list-group-item">{{ tt.name }}</li>
+                        {% empty %}
+                            <li class="list-group-item">No team types yet</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,301 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Schedule – Broadcast Engineering</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #f0f2f5;
+      --surface:   #ffffff;
+      --surface2:  #f7f8fa;
+      --border:    #e2e6ed;
+      --border2:   #cdd3dc;
+      --accent:    #0d7377;
+      --accent-lt: #e6f4f4;
+      --accent2:   #14a085;
+      --danger:    #e53e3e;
+      --warning:   #d69e2e;
+      --success:   #276749;
+      --text:      #1a202c;
+      --text-dim:  #4a5568;
+      --text-muted:#a0aec0;
+      --mono:      'DM Mono', monospace;
+      --sans:      'DM Sans', sans-serif;
+      --radius:    10px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow:    0 4px 16px rgba(0,0,0,0.10);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: 230px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .sidebar-brand {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 3px;
+    }
+    .brand-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .btn-new-meeting {
+      margin: 14px 14px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(13,115,119,0.25);
+    }
+    .btn-new-meeting:hover { background: #0a5f63; }
+    .sidebar-nav { padding: 6px 0; flex: 1; }
+    .nav-section-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 10px 20px 4px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13.5px;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active {
+      border-left-color: var(--accent);
+      background: var(--accent-lt);
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .sidebar-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .sidebar-footer strong { color: var(--text-dim); display: block; margin-top: 2px; }
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .topbar {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .topbar h1 { font-size: 18px; font-weight: 600; color: var(--text); }
+    .content { padding: 26px 28px; flex: 1; overflow-y: auto; }
+    .toast-wrap {
+      position: fixed; top: 20px; right: 24px; z-index: 999;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast {
+      padding: 11px 16px; border-radius: var(--radius);
+      font-size: 13px; font-weight: 500; min-width: 240px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: var(--shadow); animation: toastIn .3s ease;
+    }
+    .toast.success { background:#f0fff4; border:1px solid #68d391; color: var(--success); }
+    .toast.error   { background:#fff5f5; border:1px solid #fc8181; color: var(--danger); }
+    @keyframes toastIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:none; } }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-body { padding: 16px 20px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: var(--radius);
+      font-family: var(--sans); font-size: 13px; font-weight: 500;
+      border: none; cursor: pointer; text-decoration: none;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-primary   { background: var(--accent); color:#fff; }
+    .btn-primary:hover { background: #0a5f63; }
+    .btn-secondary { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--border); color: var(--text); }
+    .btn-danger    { background: #fff5f5; color: var(--danger); border: 1px solid #fed7d7; }
+    .btn-danger:hover { background: #fed7d7; }
+    .btn-warning   { background: #fffbeb; color: var(--warning); border: 1px solid #f6e05e; }
+    .btn-warning:hover { background: #fef3c7; }
+    .btn-sm { padding: 5px 11px; font-size: 12px; }
+    .badge {
+      display: inline-block; padding: 2px 9px; border-radius: 20px;
+      font-family: var(--mono); font-size: 10px; font-weight: 500;
+    }
+    .badge-scheduled { background: #ebf8ff; color: #2b6cb0; border:1px solid #bee3f8; }
+    .badge-cancelled  { background: #fff5f5; color: var(--danger); border:1px solid #fed7d7; }
+    .badge-completed  { background: #f0fff4; color: var(--success); border:1px solid #9ae6b4; }
+    .badge-today     { background: var(--accent-lt); color: var(--accent); border:1px solid #b2dfdf; }
+    .platform-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 500;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.span2 { grid-column: span 2; }
+    .form-label {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .form-input, .form-textarea, .form-select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13.5px;
+      padding: 9px 13px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      width: 100%;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(13,115,119,0.1);
+    }
+    .form-textarea { resize: vertical; line-height: 1.6; }
+    select.multi-select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      padding: 6px 8px;
+      outline: none;
+      width: 100%;
+      min-height: 100px;
+    }
+    select.multi-select:focus { border-color: var(--accent); }
+    .form-help { font-size: 11px; color: var(--text-muted); }
+    .errorlist { list-style:none; margin-top:4px; }
+    .errorlist li { font-size:11px; color:var(--danger); }
+    .non-field-errors { background:#fff5f5; border:1px solid #fed7d7; border-radius:8px; padding:10px 14px; margin-bottom:14px; color:var(--danger); font-size:13px; }
+    .empty-state { text-align:center; padding:50px 20px; color:var(--text-muted); }
+    .empty-state svg { margin-bottom:14px; opacity:0.3; }
+    .empty-state h3 { font-size:16px; color:var(--text-dim); margin-bottom:6px; }
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      color:var(--text-dim); text-decoration:none; font-size:13px;
+      margin-bottom:18px; transition:color .15s;
+    }
+    .back-link:hover { color:var(--accent); }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-tag">Broadcast Eng.</span>
+    <span class="brand-name">Schedule</span>
+  </div>
+  <a href="{% url 'schedule:new_meeting' %}" class="btn-new-meeting">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Schedule Meeting
+  </a>
+  <nav class="sidebar-nav">
+    <span class="nav-section-label">Views</span>
+    <a href="{% url 'schedule:dashboard' %}" class="nav-item {% if active_tab == 'dashboard' %}active{% endif %}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a href="{% url 'schedule:upcoming' %}" class="nav-item {% if active_tab == 'upcoming' %}active{% endif %}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Upcoming
+    </a>
+    <a href="{% url 'schedule:weekly' %}" class="nav-item {% if active_tab == 'weekly' %}active{% endif %}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Weekly
+    </a>
+    <a href="{% url 'schedule:monthly' %}" class="nav-item {% if active_tab == 'monthly' %}active{% endif %}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Monthly
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    Signed in as
+    <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+  </div>
+</aside>
+<main class="main">
+  {% block content %}{% endblock %}
+</main>
+{% if messages %}
+<div class="toast-wrap">
+  {% for message in messages %}
+  <div class="toast {{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+<script>setTimeout(() => document.querySelectorAll('.toast').forEach(t => t.style.opacity=0), 4000);</script>
+{% endif %}
+</body>
+</html>
