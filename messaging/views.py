@@ -14,7 +14,7 @@ def inbox(request):
     """Show all received sent messages that haven't been deleted by recipient."""
     msgs = Message.objects.filter(
         recipient=request.user,
-        status='sent',
+        status='is_draft=False',
         deleted_by_recipient=False
     )
     unread_count = msgs.filter(is_read=False).count()
@@ -32,7 +32,7 @@ def sent(request):
     """Show all messages sent by the current user."""
     msgs = Message.objects.filter(
         sender=request.user,
-        status='sent',
+        status='is_draft=False',
         deleted_by_sender=False
     )
     return render(request, 'messaging/sent.html', {
@@ -48,7 +48,7 @@ def drafts(request):
     """Show all draft messages saved by the current user."""
     msgs = Message.objects.filter(
         sender=request.user,
-        status='draft'
+        status='is_draft=True'
     )
     return render(request, 'messaging/drafts.html', {
         'messages_list': msgs,

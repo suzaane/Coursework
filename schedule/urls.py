@@ -4,7 +4,7 @@ from . import views
 app_name = 'schedule'
 
 urlpatterns = [
-    path('', views.dashboard, name='dashboard'),
+    path('', views.monthly_view, name='index'),
     path('monthly/', views.monthly_view, name='monthly'),
     path('weekly/', views.weekly_view, name='weekly'),
     path('upcoming/', views.upcoming, name='upcoming'),
