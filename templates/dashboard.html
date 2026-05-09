@@ -1,4 +1,236 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard — Broadcast Portal{% endblock %}
+
+{% block content %}
+
+<!-- Welcome -->
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Welcome back, {{ user.first_name|default:user.username }} 👋</h1>
+    <p class="page-sub">Here's what's happening today across your teams.</p>
+  </div>
+</div>
+
+
+<!-- ── STAT CARDS + QUICK ACTIONS ── -->
+<div class="stats-row">
+
+  <div class="stat-card">
+    <div class="stat-icon-wrap blue">
+      <i class="bi bi-layout-text-sidebar-reverse"></i>
+    </div>
+    <div class="stat-body">
+      <div class="stat-label">Departments</div>
+      <div class="stat-value">{{ dept_count|default:"8" }}</div>
+      <div class="stat-sub">{{ dept_active|default:"Active" }}</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon-wrap green">
+      <i class="bi bi-people-fill"></i>
+    </div>
+    <div class="stat-body">
+      <div class="stat-label">Total Teams</div>
+      <div class="stat-value">{{ team_count|default:"12" }}</div>
+      <div class="stat-sub">{{ team_sub|default:"Clusters" }}</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon-wrap purple">
+      <i class="bi bi-person-check-fill"></i>
+    </div>
+    <div class="stat-body">
+      <div class="stat-label">Total Members</div>
+      <div class="stat-value">{{ member_count|default:"120" }}</div>
+      <div class="stat-sub">Across all teams</div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-card">
+    <div class="qa-title">Quick Actions</div>
+    <a href="{% url 'messaging:compose' %}" class="qa-btn primary">
+      <i class="bi bi-send"></i>
+      Send Message
+      <i class="bi bi-chevron-right qa-chevron"></i>
+    </a>
+    <a href="#" class="qa-btn secondary">
+      <i class="bi bi-calendar-plus"></i>
+      Schedule Meeting
+      <i class="bi bi-chevron-right qa-chevron"></i>
+    </a>
+    <a href="#" class="qa-btn secondary">
+      <i class="bi bi-diagram-3"></i>
+      Organisation Chart
+      <i class="bi bi-chevron-right qa-chevron"></i>
+    </a>
+  </div>
+
+</div>
+
+
+<!-- ── MIDDLE ROW ── -->
+<div class="dashboard-grid">
+
+  <!-- Recently Viewed Teams -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Recently Viewed Teams</span>
+      <a href="#" class="link-all">View all <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="card-body p-0">
+      {% if recent_teams %}
+        {% for team in recent_teams %}
+        <div class="team-row">
+          <div class="team-avatar">
+            <i class="bi bi-diagram-2"></i>
+          </div>
+          <div class="team-info">
+            <div class="team-name">{{ team.name }}</div>
+            <div class="team-meta">
+              <span><i class="bi bi-people"></i> {{ team.member_count|default:"—" }} members</span>
+              <span class="dot-sep">·</span>
+              <span><i class="bi bi-git"></i> {{ team.repo_count|default:"—" }} repos</span>
+            </div>
+          </div>
+          <i class="bi bi-chevron-right team-chevron"></i>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="team-row">
+          <div class="team-avatar blue">
+            <i class="bi bi-diagram-2"></i>
+          </div>
+          <div class="team-info">
+            <div class="team-name">Frontend Development</div>
+            <div class="team-meta">
+              <span><i class="bi bi-people"></i> 12 members</span>
+              <span class="dot-sep">·</span>
+              <span><i class="bi bi-git"></i> 8 repos</span>
+            </div>
+          </div>
+          <i class="bi bi-chevron-right team-chevron"></i>
+        </div>
+        <div class="team-row">
+          <div class="team-avatar green">
+            <i class="bi bi-diagram-2"></i>
+          </div>
+          <div class="team-info">
+            <div class="team-name">Backend Development</div>
+            <div class="team-meta">
+              <span><i class="bi bi-people"></i> 10 members</span>
+              <span class="dot-sep">·</span>
+              <span><i class="bi bi-git"></i> 6 repos</span>
+            </div>
+          </div>
+          <i class="bi bi-chevron-right team-chevron"></i>
+        </div>
+        <div class="team-row">
+          <div class="team-avatar purple">
+            <i class="bi bi-diagram-2"></i>
+          </div>
+          <div class="team-info">
+            <div class="team-name">QA & Testing</div>
+            <div class="team-meta">
+              <span><i class="bi bi-people"></i> 7 members</span>
+              <span class="dot-sep">·</span>
+              <span><i class="bi bi-git"></i> 4 repos</span>
+            </div>
+          </div>
+          <i class="bi bi-chevron-right team-chevron"></i>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent Messages -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Recent Messages</span>
+      <a href="{% url 'messaging:inbox' %}" class="link-all">View all <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="card-body p-0">
+      {% if recent_messages %}
+        {% for msg in recent_messages %}
+        <a href="{% url 'messaging:view_message' msg.pk %}" class="msg-row {% if not msg.is_read %}unread{% endif %}">
+          <div class="msg-avatar">
+            {{ msg.sender.first_name|first|upper|default:msg.sender.username|first|upper }}
+          </div>
+          <div class="msg-info">
+            <div class="msg-sender">{{ msg.sender.get_full_name|default:msg.sender.username }}</div>
+            <div class="msg-subject">{{ msg.subject }}</div>
+          </div>
+          <div class="msg-time">{{ msg.created_at|timesince }} ago</div>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="bi bi-inbox empty-icon"></i>
+          <p>No messages yet.</p>
+          <a href="{% url 'messaging:compose' %}" class="btn btn-sm btn-primary">Compose</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ── RECENT ACTIVITY ── -->
+<div class="section-header">
+  <span class="section-title">Recent Activity</span>
+  <a href="#" class="link-all">View all <i class="bi bi-arrow-right"></i></a>
+</div>
+
+<div class="card">
+  <div class="activity-item danger-left">
+    <div class="activity-dot red">
+      <i class="bi bi-exclamation-circle-fill"></i>
+    </div>
+    <div class="activity-content">
+      <div class="activity-title danger">Critical Update</div>
+      <p class="activity-body">
+        Server cluster node US-EAST-1 is experiencing unusual latency spikes.
+        Automatic failover initiated for core database services.
+      </p>
+    </div>
+    <div class="activity-time">2 MINS AGO</div>
+  </div>
+
+  <div class="activity-item warning-left">
+    <div class="activity-dot yellow">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+    </div>
+    <div class="activity-content">
+      <div class="activity-title warning">System Alert</div>
+      <p class="activity-body">
+        Weekly security audit complete. 3 non-critical policy violations detected
+        in the Frontend repository. Please review the report.
+      </p>
+    </div>
+    <div class="activity-time">45 MINS AGO</div>
+  </div>
+
+  <div class="activity-item">
+    <div class="activity-dot blue">
+      <i class="bi bi-check-circle-fill"></i>
+    </div>
+    <div class="activity-content">
+      <div class="activity-title">Deployment Success</div>
+      <p class="activity-body">
+        Version 4.2.0 has been successfully deployed to the Production environment.
+        All health checks passed.
+      </p>
+    </div>
+    <div class="activity-time">2 HOURS AGO</div>
+  </div>
+</div>
+
+{% endblock content %}
+=======
 
 {% block main_content %}
 <div class="container mt-4">
@@ -27,3 +259,4 @@
     </div>
 </div>
 {% endblock %}
+>>>>>>> origin/develop
