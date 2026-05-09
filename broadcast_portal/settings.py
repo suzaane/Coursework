@@ -18,7 +18,6 @@ INSTALLED_APPS = [
     'organisation',
     'messaging',
     'schedule',
-    'core',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -45,7 +44,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'messaging.context_processors.unread_message_count',   # ← add this
+                'messaging.context_processors.unread_message_count',
             ],
         },
     },
@@ -77,7 +76,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'                # ← changed to dashboard
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

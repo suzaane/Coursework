@@ -6,8 +6,8 @@ from django.http import Http404
 from .models import Message
 from .forms import ComposeMessageForm
 
-'''Messsaging app views: inbox, sent, drafts, compose, view message, delete message, reply.'''
-#Inbox
+
+# ─── INBOX ────────────────────────────────────────────────────────────────────
 
 @login_required
 def inbox(request):
@@ -25,7 +25,8 @@ def inbox(request):
     })
 
 
-# SENT 
+# ─── SENT ─────────────────────────────────────────────────────────────────────
+
 @login_required
 def sent(request):
     """Show all messages sent by the current user."""
@@ -40,7 +41,7 @@ def sent(request):
     })
 
 
-# DRAFTS
+# ─── DRAFTS ───────────────────────────────────────────────────────────────────
 
 @login_required
 def drafts(request):
@@ -55,7 +56,7 @@ def drafts(request):
     })
 
 
-# COMPOSE / SEND / SAVE DRAFT 
+# ─── COMPOSE / SEND / SAVE DRAFT ──────────────────────────────────────────────
 
 @login_required
 def compose(request, draft_id=None):
@@ -100,7 +101,7 @@ def compose(request, draft_id=None):
     })
 
 
-#  VIEW SINGLE MESSAGE 
+# ─── VIEW SINGLE MESSAGE ──────────────────────────────────────────────────────
 
 @login_required
 def view_message(request, pk):
@@ -124,7 +125,7 @@ def view_message(request, pk):
     })
 
 
-# DELETE MESSAGE 
+# ─── DELETE MESSAGE ───────────────────────────────────────────────────────────
 
 @login_required
 def delete_message(request, pk):
@@ -145,7 +146,7 @@ def delete_message(request, pk):
         raise Http404
 
 
-# REPLY
+# ─── REPLY ────────────────────────────────────────────────────────────────────
 
 @login_required
 def reply(request, pk):

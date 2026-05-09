@@ -22,4 +22,9 @@ class Message(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.sender} → {self.recipient}: {self.subject}"
+        return f"{self.sender.username} → {self.recipient.username}: {self.subject}"
+
+    def mark_as_read(self):
+        if not self.is_read:
+            self.is_read = True
+            self.save()
