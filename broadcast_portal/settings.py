@@ -124,8 +124,8 @@ STATIC_URL = 'static/'
 
 # Login settings
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+\
 
 # Static files
 STATICFILES_DIRS = [BASE_DIR / 'static']
