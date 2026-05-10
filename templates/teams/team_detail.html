@@ -26,11 +26,9 @@
                 <a href="mailto:{{ team.contact_email }}" class="btn-primary">
                     <i class="fas fa-envelope"></i> Email Team
                 </a>
-                {% comment %}
                 <a href="{% url 'schedule:new_meeting' %}?team_id={{ team.id }}" class="btn-outline">
                     <i class="fas fa-calendar-plus"></i> Schedule Meeting
                 </a>
-                {% endcomment %}
             </div>
         </div>
     </div>
