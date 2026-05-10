@@ -1,32 +1,276 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="dashboard-card">
-    <h2><i class="fas fa-link"></i> Team Dependencies</h2>
-    <p class="text-muted">View upstream and downstream team relationships</p>
+
+<style>
+    .deps-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
     
-    <form method="get" class="mb-3">
-        <select name="direction" class="form-select w-auto d-inline" onchange="this.form.submit()">
-            <option value="">All dependencies</option>
-            <option value="upstream" {% if selected_direction == 'upstream' %}selected{% endif %}>Upstream</option>
-        </select>
-    </form>
+    .page-header {
+        margin-bottom: 30px;
+    }
     
-    {% if dependencies %}
-    <table class="table table-striped">
-        <thead>
-            <tr><th>From Team</th><th>To Team</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-        {% for dep in dependencies %}
-        <tr>
-            <td><strong>{{ dep.from_team.name }}</strong> <i class="fas fa-arrow-right"></i> <strong>{{ dep.to_team.name }}</strong></td>
-            <td>{{ dep.description|default:"No description" }}</td>
-        </tr>
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+    
+    .page-header p {
+        color: #666;
+        margin-top: 5px;
+    }
+    
+    .filter-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+        padding: 6px 16px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+    
+    .filter-btn:hover {
+        border-color: #0f3460;
+        background: #f8f9fa;
+    }
+    
+    .filter-btn.active {
+        background: #0f3460;
+        color: white;
+        border-color: #0f3460;
+    }
+    
+    .team-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+    
+    .team-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        border: 1px solid #eee;
+    }
+    
+    .team-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    
+    .team-header {
+        background: linear-gradient(135deg, #0f3460, #16213e);
+        color: white;
+        padding: 20px 25px;
+    }
+    
+    .team-header h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+    }
+    
+    .team-header p {
+        margin: 5px 0 0;
+        opacity: 0.8;
+        font-size: 13px;
+    }
+    
+    .team-body {
+        padding: 20px 25px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+    }
+    
+    .dep-section {
+        background: #f8f9fa;
+        border-radius: 16px;
+        padding: 18px;
+    }
+    
+    .section-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #888;
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+    
+    .provider-list, .consumer-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .provider-item, .consumer-item {
+        background: white;
+        padding: 12px 15px;
+        border-radius: 12px;
+        border-left: 4px solid #e74c3c;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        transition: all 0.2s;
+    }
+    
+    .consumer-item {
+        border-left-color: #2ecc71;
+    }
+    
+    .provider-item:hover, .consumer-item:hover {
+        transform: translateX(4px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .item-name {
+        font-weight: 700;
+        color: #1a1a2e;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .item-desc {
+        font-size: 11px;
+        color: #999;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 20px;
+    }
+    
+    .empty-icon {
+        font-size: 48px;
+        color: #ccc;
+        margin-bottom: 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .team-body {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="deps-container">
+    <div class="page-header">
+        <h1><i class="fas fa-code-branch"></i> Engineering Team Dependencies</h1>
+        <p>Visualise upstream providers and downstream consumers for each team</p>
+    </div>
+
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-filter="all">All Teams</button>
+        <button class="filter-btn" data-filter="upstream">Upstream</button>
+        <button class="filter-btn" data-filter="downstream">Downstream</button>
+    </div>
+
+    <div class="team-grid" id="teamGrid">
+        {% for team in all_teams %}
+        <div class="team-card" data-team="{{ team.id }}">
+            <div class="team-header">
+                <h2><i class="fas fa-users"></i> {{ team.name }}</h2>
+                <p>{{ team.description|truncatewords:10|default:"Engineering team" }}</p>
+            </div>
+            <div class="team-body">
+                <div class="dep-section">
+                    <div class="section-title"><i class="fas fa-arrow-up"></i> UPSTREAM PROVIDERS</div>
+                    <div class="provider-list" id="upstream-{{ team.id }}">
+                        {% for dep in dependencies %}
+                            {% if dep.to_team == team %}
+                            <div class="provider-item">
+                                <div class="item-name">{{ dep.from_team.name }}</div>
+                                <div class="item-desc">{{ dep.description|default:"Provides service to this team" }}</div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not dependencies|length or not team.get_upstream_dependencies %}
+                        <div class="provider-item" style="color:#999;">No upstream providers</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="dep-section">
+                    <div class="section-title"><i class="fas fa-arrow-down"></i> DOWNSTREAM CONSUMERS</div>
+                    <div class="consumer-list" id="downstream-{{ team.id }}">
+                        {% for dep in dependencies %}
+                            {% if dep.from_team == team %}
+                            <div class="consumer-item">
+                                <div class="item-name">{{ dep.to_team.name }}</div>
+                                <div class="item-desc">{{ dep.description|default:"Depends on this team" }}</div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not dependencies|length or not team.get_downstream_dependencies %}
+                        <div class="consumer-item" style="color:#999;">No downstream consumers</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon"><i class="fas fa-users"></i></div>
+            <h3>No teams found</h3>
+            <p>Teams will appear here once created.</p>
+        </div>
         {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <div class="alert alert-info">No dependencies found.</div>
-    {% endif %}
+    </div>
 </div>
+
+<script>
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const teamCards = document.querySelectorAll('.team-card');
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const filter = btn.getAttribute('data-filter');
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            teamCards.forEach(card => {
+                const teamId = card.getAttribute('data-team');
+                const upstreamSection = card.querySelector('.dep-section:first-child');
+                const downstreamSection = card.querySelector('.dep-section:last-child');
+                const upstreamList = document.getElementById(`upstream-${teamId}`);
+                const downstreamList = document.getElementById(`downstream-${teamId}`);
+                const hasUpstream = upstreamList && upstreamList.children.length > 0 && !upstreamList.innerHTML.includes('No upstream providers');
+                const hasDownstream = downstreamList && downstreamList.children.length > 0 && !downstreamList.innerHTML.includes('No downstream consumers');
+                
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                    upstreamSection.style.display = 'block';
+                    downstreamSection.style.display = 'block';
+                } else if (filter === 'upstream') {
+                    // Show card only if it has upstream dependencies
+                    card.style.display = hasUpstream ? 'block' : 'none';
+                    if (hasUpstream) {
+                        upstreamSection.style.display = 'block';
+                        downstreamSection.style.display = 'none';
+                    }
+                } else if (filter === 'downstream') {
+                    // Show card only if it has downstream dependencies
+                    card.style.display = hasDownstream ? 'block' : 'none';
+                    if (hasDownstream) {
+                        upstreamSection.style.display = 'none';
+                        downstreamSection.style.display = 'block';
+                    }
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -1,49 +1,373 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="dashboard-card">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="{% url 'organisation:department_list' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Departments
-        </a>
+
+<style>
+    .detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #0f3460;
+        text-decoration: none;
+        margin-bottom: 25px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .back-link:hover {
+        gap: 12px;
+        color: #667eea;
+    }
+    
+    /* Department Header */
+    .department-hero {
+        background: linear-gradient(135deg, #0f3460, #16213e);
+        border-radius: 24px;
+        padding: 35px;
+        color: white;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .department-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+    
+    .department-badge {
+        background: rgba(255,255,255,0.2);
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 30px;
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .department-hero h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin: 0 0 10px;
+    }
+    
+    .department-spec {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-bottom: 20px;
+    }
+    
+    .department-desc {
+        font-size: 14px;
+        opacity: 0.8;
+        max-width: 70%;
+        line-height: 1.6;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+    }
+    
+    .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #0f3460;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+    
+    /* Leader Card */
+    .leader-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 30px;
+        border: 1px solid #eee;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .leader-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f2f5;
+    }
+    
+    .leader-avatar {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #0f3460, #667eea);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+    }
+    
+    .leader-info h3 {
+        margin: 0;
+        font-size: 20px;
+        color: #1a1a2e;
+    }
+    
+    .leader-info p {
+        margin: 5px 0 0;
+        color: #666;
+    }
+    
+    .leader-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .leader-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #555;
+        font-size: 14px;
+    }
+    
+    /* Teams Section */
+    .teams-section {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid #eee;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .teams-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+    
+    .team-item {
+        background: #f8f9fa;
+        border-radius: 16px;
+        padding: 20px;
+        transition: all 0.2s;
+        border: 1px solid #eee;
+    }
+    
+    .team-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        border-color: #0f3460;
+    }
+    
+    .team-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0f3460;
+        margin-bottom: 8px;
+    }
+    
+    .team-description {
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 12px;
+        line-height: 1.5;
+    }
+    
+    .team-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    .meta-tag {
+        background: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        color: #0f3460;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .skills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+    }
+    
+    .skill-tag {
+        background: #e8f0fe;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 11px;
+        color: #0f3460;
+    }
+    
+    .empty-teams {
+        text-align: center;
+        padding: 50px;
+        color: #999;
+    }
+</style>
+
+<div class="detail-container">
+    <a href="{% url 'organisation:department_list' %}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Departments
+    </a>
+    
+    <!-- Department Hero -->
+    <div class="department-hero">
+        <div class="department-badge">
+            <i class="fas fa-building"></i> Department
+        </div>
+        <h1>{{ department.name }}</h1>
+        <div class="department-spec">
+            <i class="fas fa-tag"></i> {{ department.specialisation|default:"General" }}
+        </div>
+        <div class="department-desc">
+            {{ department.description|default:"No description provided." }}
+        </div>
     </div>
     
-    <h2>{{ department.name }}</h2>
-    <p class="text-muted">{{ department.specialisation }}</p>
-    <p>{{ department.description|default:"No description provided." }}</p>
-
-    {% if department.leader %}
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            <strong><i class="fas fa-user-tie"></i> Department Leader</strong>
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ team_count }}</div>
+            <div class="stat-label"><i class="fas fa-users"></i> Teams</div>
         </div>
-        <div class="card-body">
-            <h5>{{ department.leader.name }}</h5>
-            <p>Email: {{ department.leader.email }}</p>
-            <p>Phone: {{ department.leader.phone|default:"Not provided" }}</p>
+        <div class="stat-card">
+            <div class="stat-value">{% if department.leader %}1{% else %}0{% endif %}</div>
+            <div class="stat-label"><i class="fas fa-user-tie"></i> Department Leaders</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ department.created_at|date:"Y" }}</div>
+            <div class="stat-label"><i class="fas fa-calendar"></i> Established</div>
+        </div>
+    </div>
+    
+    <!-- Leader Section -->
+    {% if department.leader %}
+    <div class="leader-card">
+        <div class="leader-header">
+            <div class="leader-avatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="leader-info">
+                <h3>{{ department.leader.name }}</h3>
+                <p>Department Leader</p>
+            </div>
+        </div>
+        <div class="leader-details">
+            <div class="leader-detail-item">
+                <i class="fas fa-envelope" style="color: #0f3460;"></i>
+                <span>{{ department.leader.email|default:"No email provided" }}</span>
+            </div>
+            <div class="leader-detail-item">
+                <i class="fas fa-phone" style="color: #0f3460;"></i>
+                <span>{{ department.leader.phone|default:"No phone provided" }}</span>
+            </div>
+            <div class="leader-detail-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Active since {{ department.created_at|date:"F Y" }}</span>
+            </div>
         </div>
     </div>
     {% endif %}
-
-    <h4><i class="fas fa-users"></i> Teams in {{ department.name }} ({{ team_count }})</h4>
-    <div class="row mt-3">
-        {% for team in teams %}
-        <div class="col-md-6 mb-3">
-            <div class="team-card">
-                <h5>{{ team.name }}</h5>
-                <p class="small text-muted">{{ team.description|truncatewords:20 }}</p>
-                <p><strong>Manager:</strong> {{ team.manager.username|default:"Not assigned" }}</p>
-                <p><strong>Skills:</strong> 
+    
+    <!-- Teams Section -->
+    <div class="teams-section">
+        <div class="section-title">
+            <i class="fas fa-users" style="color: #0f3460;"></i>
+            Teams in {{ department.name }}
+            <span class="badge" style="background: #0f3460; color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px;">
+                {{ team_count }}
+            </span>
+        </div>
+        
+        {% if teams %}
+        <div class="teams-grid">
+            {% for team in teams %}
+            <div class="team-item">
+                <div class="team-name">
+                    <i class="fas fa-code-branch"></i> {{ team.name }}
+                </div>
+                <div class="team-description">
+                    {{ team.description|default:"No description provided."|truncatewords:20 }}
+                </div>
+                <div class="team-meta">
+                    <span class="meta-tag">
+                        <i class="fas fa-user"></i> Manager: {{ team.manager.username|default:"Not assigned" }}
+                    </span>
+                    <span class="meta-tag">
+                        <i class="fas fa-users"></i> Members: {{ team.members.count|default:"0" }}
+                    </span>
+                </div>
+                {% if team.skills.all %}
+                <div class="skills-container">
                     {% for skill in team.skills.all|slice:":3" %}
-                        <span class="badge-custom">{{ skill.name }}</span>
+                    <span class="skill-tag">
+                        <i class="fas fa-code"></i> {{ skill.name }}
+                    </span>
                     {% endfor %}
-                </p>
+                    {% if team.skills.count > 3 %}
+                    <span class="skill-tag">+{{ team.skills.count|add:"-3" }} more</span>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info">No teams assigned to this department yet.</div>
+        {% else %}
+        <div class="empty-teams">
+            <i class="fas fa-users" style="font-size: 48px; color: #ccc; margin-bottom: 15px; display: block;"></i>
+            <h4>No teams assigned yet</h4>
+            <p>This department doesn't have any teams. Teams will appear here once assigned.</p>
         </div>
-        {% endfor %}
+        {% endif %}
     </div>
 </div>
+
 {% endblock %}

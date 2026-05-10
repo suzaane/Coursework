@@ -1,0 +1,86 @@
+[
+{
+  "model": "accounts.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Lg1bjOilNULY4muCDKxiTG$TL+UR076NLrhv9rCb/ldUUpd7F593g60zqNUEu/RSro=",
+    "last_login": "2026-05-09T10:04:52.047Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-05-09T08:01:21.309Z",
+    "role": "engineer",
+    "phone": "",
+    "department": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$YBDrlOfGPwJYAJyTmdvsq2$wRguLONAiIGQ7EqPth1+uXYxMSGBn8s+aH1UDKSCIw8=",
+    "last_login": "2026-05-09T08:31:45.166Z",
+    "is_superuser": false,
+    "username": "JJ",
+    "first_name": "",
+    "last_name": "",
+    "email": "j@o.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-05-09T08:02:47.317Z",
+    "role": "team_leader",
+    "phone": "",
+    "department": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$hM4C5ncM43VIIg2Gqy3vds$nalReP7D/Nn8nK/frc85ADRydqNcA3abFA6RTYStl7k=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "team_manager",
+    "first_name": "",
+    "last_name": "",
+    "email": "manager@broadcast.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-05-09T08:53:03.591Z",
+    "role": "engineer",
+    "phone": "",
+    "department": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$38lTtJ3OdHw3CjNOO5h6xt$QAwv7Y2AulDlcSSJE97OKlvy2I4u3UuIvpRBeo5D0+I=",
+    "last_login": "2026-05-09T11:46:31.260Z",
+    "is_superuser": false,
+    "username": "K",
+    "first_name": "",
+    "last_name": "",
+    "email": "kafinaprajapati21@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-05-09T11:46:29.190Z",
+    "role": "engineer",
+    "phone": "",
+    "department": "",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]

@@ -23,35 +23,60 @@
       </div>
     </div>
     <nav class="sidebar-nav">
+      <!-- DASHBOARD -->
       <div class="nav-section-label">MAIN</div>
+      <a href="{% url 'dashboard' %}" class="nav-item">
+        <i class="bi bi-speedometer2 nav-icon"></i><span>Dashboard</span>
+      </a>
 
-      <a href="{% url 'dashboard' %}"
-         class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-        <i class="bi bi-squares nav-icon"></i><span>Dashboard</span>
+      <!-- ORGANISATION (YOUR MODULE) -->
+      <div class="nav-section-label">ORGANISATION</div>
+      <a href="{% url 'organisation:department_list' %}" class="nav-item">
+        <i class="bi bi-building nav-icon"></i><span>Departments</span>
       </a>
-      <a href="{% url 'teams:team_list' %}"
-         class="nav-item {% if 'teams' in request.resolver_match.app_name|default:'' %}active{% endif %}">
-        <i class="bi bi-people nav-icon"></i><span>Teams</span>
+      <a href="{% url 'organisation:org_chart' %}" class="nav-item">
+        <i class="bi bi-diagram-3 nav-icon"></i><span>Org Chart</span>
       </a>
-      <a href="{% url 'organisation:department_list' %}"
-         class="nav-item {% if 'organisation' in request.resolver_match.app_name|default:'' %}active{% endif %}">
-        <i class="bi bi-diagram-3 nav-icon"></i><span>Department</span>
+      <a href="{% url 'organisation:teamtype_list' %}" class="nav-item">
+        <i class="bi bi-tags nav-icon"></i><span>Team Types</span>
       </a>
-      <a href="{% url 'messaging:inbox' %}"
-         class="nav-item {% if 'messaging' in request.resolver_match.app_name|default:'' %}active{% endif %}">
-        <i class="bi bi-chat-square-text nav-icon"></i><span>Messages</span>
+      <a href="{% url 'organisation:dependency_list' %}" class="nav-item">
+        <i class="bi bi-shuffle nav-icon"></i><span>Dependencies</span>
+      </a>
+
+      <!-- ANALYTICS (YOUR REPORTS) -->
+      <div class="nav-section-label">ANALYTICS</div>
+      <a href="{% url 'organisation:admin_stats' %}" class="nav-item">
+        <i class="bi bi-bar-chart-steps nav-icon"></i><span>Statistics</span>
+      </a>
+      <a href="{% url 'organisation:admin_reports' %}" class="nav-item">
+        <i class="bi bi-file-earmark-text nav-icon"></i><span>Reports</span>
+      </a>
+
+      <!-- COMMUNICATION -->
+      <div class="nav-section-label">COMMUNICATION</div>
+      <a href="{% url 'teams:team_list' %}" class="nav-item">
+        <i class="bi bi-people nav-icon"></i><span>All Teams</span>
+      </a>
+      <a href="{% url 'messaging:inbox' %}" class="nav-item">
+        <i class="bi bi-chat-dots nav-icon"></i><span>Messages</span>
         {% if unread_count|default:0 > 0 %}<span class="nav-badge">{{ unread_count }}</span>{% endif %}
       </a>
       <!-- Temporarily disabled until the Schedule app defines 'schedule:dashboard' -->
       <a href="#"
          class="nav-item">
+      <a href="{% url 'schedule:monthly' %}"
+         class="nav-item {% if 'schedule' in request.resolver_match.app_name|default:'' %}active{% endif %}">
         <i class="bi bi-calendar3 nav-icon"></i><span>Schedule</span>
       </a>
 
-      <div class="nav-section-label" style="margin-top:12px;">ACCOUNT</div>
-      <a href="{% url 'accounts:profile' %}"
-         class="nav-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-        <i class="bi bi-person-circle nav-icon"></i><span>Profile</span>
+      <!-- ACCOUNT -->
+      <div class="nav-section-label">ACCOUNT</div>
+      <a href="{% url 'accounts:profile' %}" class="nav-item">
+        <i class="bi bi-person-badge nav-icon"></i><span>My Profile</span>
+      </a>
+      <a href="/admin/" class="nav-item">
+        <i class="bi bi-shield-lock nav-icon"></i><span>Admin Panel</span>
       </a>
     </nav>
 
@@ -101,7 +126,23 @@
   </main>
 
 {% else %}
-  {% block auth_content %}{% endblock %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+        
+        {% block auth_content %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
 {% endif %}
 
 {% block extra_js %}{% endblock %}
