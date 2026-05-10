@@ -1,109 +1,398 @@
 {% extends 'base.html' %}
 
-{% block main_content %}
-<div class="container mt-4">
-    <!-- Header with icon -->
-    <div class="mb-4">
-        <h1 style="font-size: 1.875rem; font-weight: 600; color: #1e293b;">
-            <i class="fas fa-users" style="color: #3b82f6;"></i> Engineering Teams
-        </h1>
+{% block content %}
+<div class="teams-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Engineering Teams</h1>
+            <p class="page-sub">Manage and discover all engineering teams across the organization</p>
+        </div>
+        <div class="page-actions">
+            <a href="{% url 'organisation:org_chart' %}" class="btn-outline">
+                <i class="bi bi-diagram-3"></i> View Org Chart
+            </a>
+        </div>
     </div>
-    
-    <!-- Search and Filter Section - Figma style -->
+
+    <!-- Search and Filter Section -->
     <div class="search-section">
-        <form method="GET" class="row g-3">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0">
-                        <i class="fas fa-search text-muted"></i>
-                    </span>
-                    <input type="text" name="q" class="form-control border-start-0" 
-                           placeholder="Search teams by name, department..." value="{{ query }}">
-                </div>
+        <div class="search-grid">
+            <div class="search-input-wrapper">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" name="q" class="search-input" placeholder="Search teams by name, department, or manager..." value="{{ query }}" id="searchInput">
             </div>
-            <div class="col-md-3">
-                <select name="skill" class="form-select" onchange="this.form.submit()">
+            <div class="filter-wrapper">
+                <i class="bi bi-funnel filter-icon"></i>
+                <select name="skill" class="filter-select" id="skillFilter">
                     <option value="">All departments</option>
                     {% for skill in skills %}
-                        <option value="{{ skill.id }}" {% if request.GET.skill == skill.id|stringformat:'s' %}selected{% endif %}>
-                            {{ skill.name }}
-                        </option>
+                    <option value="{{ skill.id }}" {% if request.GET.skill == skill.id|stringformat:'s' %}selected{% endif %}>
+                        {{ skill.name }}
+                    </option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-3">
-                <select class="form-select" onchange="this.form.submit()">
-                    <option value="">Sort by A-Z</option>
-                    <option value="az">A to Z</option>
-                    <option value="za">Z to A</option>
-                </select>
-            </div>
             {% if request.GET.skill or request.GET.q %}
-            <div class="col-12">
-                <a href="{% url 'teams:team_list' %}" class="btn btn-link text-decoration-none">
-                    <i class="fas fa-times"></i> Clear filters
-                </a>
-            </div>
+            <a href="{% url 'teams:team_list' %}" class="clear-filter-btn">
+                <i class="bi bi-x-lg"></i> Clear filters
+            </a>
             {% endif %}
-        </form>
+        </div>
     </div>
-    
-    <!-- Teams Grid - Figma style cards -->
-    <div class="row">
-        {% for team in teams %}
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="team-card">
-                <div class="team-icon">
-                    <i class="fas fa-code-branch"></i>
-                </div>
-                <h3>{{ team.name }}</h3>
-                <p class="managed-by">Managed by {{ team.manager.username|default:"Not assigned" }}</p>
-                <p class="description">{{ team.description|truncatewords:25 }}</p>
-                
-                <!-- Skills badges -->
-                {% if team.skills.all %}
-                    <div class="mt-2 mb-3">
-                        {% for skill in team.skills.all|slice:":3" %}
-                            <span class="badge" style="background-color: #e2e8f0; color: #475569; font-weight: 500; margin-right: 6px; padding: 4px 10px;">
-                                {{ skill.name }}
-                            </span>
-                        {% endfor %}
-                        {% if team.skills.all.count > 3 %}
-                            <span class="badge" style="background-color: #f1f5f9; color: #64748b;">+{{ team.skills.all.count|add:"-3" }} more</span>
-                        {% endif %}
-                    </div>
-                {% endif %}
 
-                <!-- Projects count badge -->
-                {% if team.concurrent_projects > 0 %}
-                    <div class="mb-3">
-                        {% with projects=team.concurrent_projects|default:0 %}
-                            {% if projects > 5 %}
-                                <span class="badge" style="background-color: #ef4444; color: white; padding: 4px 10px;">
-                            {% elif projects > 3 %}
-                                <span class="badge" style="background-color: #f59e0b; color: white; padding: 4px 10px;">
-                            {% else %}
-                                <span class="badge" style="background-color: #10b981; color: white; padding: 4px 10px;">
-                            {% endif %}
-                                <i class="fas fa-chart-line"></i> {{ projects }} projects
-                            </span>
-                        {% endwith %}
-                    </div>
-                {% endif %}
+    <!-- Teams Grid -->
+    <div class="teams-grid">
+        {% for team in teams %}
+        <div class="team-card-modern">
+            <!-- Card Header with Icon -->
+            <div class="team-card-header">
+                <div class="team-card-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="team-card-manager">
+                    <i class="bi bi-person-badge"></i> {{ team.manager.username|default:"Not assigned" }}
+                </div>
+            </div>
+            
+            <!-- Card Body -->
+            <div class="team-card-body">
+                <h3 class="team-card-title">{{ team.name }}</h3>
+                <p class="team-card-description">{{ team.description|truncatewords:20 }}</p>
                 
-                <a href="{% url 'teams:team_detail' team.id %}" class="btn-view">
-                    View Details →
+                <!-- Skills Tags -->
+                {% if team.skills.all %}
+                <div class="skills-tags">
+                    {% for skill in team.skills.all|slice:":4" %}
+                    <span class="skill-tag">{{ skill.name }}</span>
+                    {% endfor %}
+                    {% if team.skills.all.count > 4 %}
+                    <span class="skill-tag more">+{{ team.skills.all.count|add:"-4" }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Card Footer -->
+            <div class="team-card-footer">
+                <div class="team-stats">
+                    <div class="stat-item">
+                        <i class="bi bi-people"></i>
+                        <span>{{ team.members.count }} members</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="bi bi-diagram-3"></i>
+                        <span>{{ team.department|default:"No Dept" }}</span>
+                    </div>
+                    <div class="stat-item projects">
+                        <i class="bi bi-kanban"></i>
+                        <span class="project-count 
+                            {% if team.concurrent_projects > 5 %}high
+                            {% elif team.concurrent_projects > 3 %}medium
+                            {% else %}low{% endif %}">
+                            {{ team.concurrent_projects }} projects
+                        </span>
+                    </div>
+                </div>
+                <a href="{% url 'teams:team_detail' team.id %}" class="card-link">
+                    View Details <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
         </div>
         {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info" style="border-radius: 12px;">
-                <i class="fas fa-info-circle"></i> No teams found. 
-                <a href="/admin/teams/team/add/" class="alert-link">Add a team</a> in the admin panel.
-            </div>
+        <div class="empty-state">
+            <i class="bi bi-inbox empty-icon"></i>
+            <p>No teams found</p>
+            <a href="/admin/teams/team/add/" class="btn-primary">Add a team</a>
         </div>
         {% endfor %}
     </div>
 </div>
+
+<style>
+/* Teams Page Styles */
+.teams-page {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Search Section */
+.search-section {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.search-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.search-input-wrapper {
+    flex: 2;
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-3);
+    font-size: 16px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--bg);
+    transition: all 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.filter-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.filter-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-3);
+    font-size: 14px;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 12px 16px 12px 38px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--bg);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+
+.clear-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    color: var(--red-text);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    background: var(--red-bg);
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.clear-filter-btn:hover {
+    background: #fee2e2;
+}
+
+/* Teams Grid */
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 24px;
+}
+
+/* Modern Team Card */
+.team-card-modern {
+    background: var(--surface);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.team-card-modern:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15);
+}
+
+.team-card-header {
+    padding: 20px 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.team-card-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.team-card-manager {
+    font-size: 12px;
+    color: var(--text-3);
+    background: var(--bg);
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.team-card-body {
+    padding: 16px 20px;
+}
+
+.team-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-1);
+    margin-bottom: 8px;
+}
+
+.team-card-description {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+/* Skills Tags */
+.skills-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.skill-tag.more {
+    background: var(--bg);
+    color: var(--text-2);
+    border: 1px solid var(--border);
+}
+
+/* Card Footer */
+.team-card-footer {
+    padding: 16px 20px 20px;
+    border-top: 1px solid var(--border-light);
+}
+
+.team-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-2);
+}
+
+.stat-item i {
+    font-size: 14px;
+}
+
+.project-count {
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+.project-count.low {
+    background: var(--green-bg);
+    color: #065f46;
+}
+
+.project-count.medium {
+    background: var(--yellow-bg);
+    color: var(--yellow-text);
+}
+
+.project-count.high {
+    background: var(--red-bg);
+    color: var(--red-text);
+}
+
+.card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--blue);
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    transition: gap 0.2s;
+}
+
+.card-link:hover {
+    gap: 12px;
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .teams-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-grid {
+        flex-direction: column;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+</style>
+
+<script>
+    // Auto-submit on filter change
+    document.getElementById('skillFilter').addEventListener('change', function() {
+        this.form.submit();
+    });
+    
+    // Search with debounce (optional)
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            this.form.submit();
+        }, 500);
+    });
+</script>
 {% endblock %}

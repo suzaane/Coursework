@@ -1,28 +1,378 @@
 {% extends 'base.html' %}
 
-{% block main_content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8 mx-auto">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h4 class="mb-0">My Profile</h4>
+{% block content %}
+<div class="profile-page">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar-large">
+            {{ user.first_name|first|upper|default:user.username|first|upper }}
+        </div>
+        <div class="profile-header-info">
+            <h1>{{ user.get_full_name|default:user.username }}</h1>
+            <div class="profile-role-badge">
+                <i class="bi bi-person-badge"></i> {{ user.get_role_display }}
+            </div>
+            <p class="profile-join-date">
+                <i class="bi bi-calendar3"></i> Joined {{ user.date_joined|date:"F Y" }}
+            </p>
+        </div>
+        <div class="profile-header-actions">
+            <a href="{% url 'accounts:update_profile' %}" class="btn-primary">
+                <i class="bi bi-pencil-square"></i> Edit Profile
+            </a>
+            <a href="{% url 'accounts:change_password' %}" class="btn-outline">
+                <i class="bi bi-key"></i> Change Password
+            </a>
+        </div>
+    </div>
+
+    <!-- Profile Content Grid -->
+    <div class="profile-grid">
+        <!-- Personal Information Card -->
+        <div class="info-card">
+            <div class="card-header-custom">
+                <i class="bi bi-person-circle"></i>
+                <h3>Personal Information</h3>
+            </div>
+            <div class="card-body-custom">
+                <div class="info-row">
+                    <div class="info-label">Username</div>
+                    <div class="info-value">{{ user.username }}</div>
                 </div>
-                <div class="card-body">
-                    <table class="table">
-                        <tr><th>Username:</th><td>{{ user.username }}</td></tr>
-                        <tr><th>Full Name:</th><td>{{ user.get_full_name|default:"-" }}</td></tr>
-                        <tr><th>Email:</th><td>{{ user.email }}</td></tr>
-                        <tr><th>Role:</th><td>{{ user.get_role_display }}</td></tr>
-                        <tr><th>Phone:</th><td>{{ user.phone|default:"-" }}</td></tr>
-                        <tr><th>Department:</th><td>{{ user.department|default:"-" }}</td></tr>
-                        <tr><th>Last Login:</th><td>{{ user.last_login|date:"F j, Y, g:i a" }}</td></tr>
-                    </table>
-                    <a href="{% url 'accounts:update_profile' %}" class="btn btn-primary">Edit Profile</a>
-                    <a href="{% url 'accounts:change_password' %}" class="btn btn-warning">Change Password</a>
+                <div class="info-row">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">{{ user.get_full_name|default:"—" }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value">
+                        <i class="bi bi-envelope"></i> {{ user.email }}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value">{{ user.phone|default:"—" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Information Card -->
+        <div class="info-card">
+            <div class="card-header-custom">
+                <i class="bi bi-briefcase"></i>
+                <h3>Professional Information</h3>
+            </div>
+            <div class="card-body-custom">
+                <div class="info-row">
+                    <div class="info-label">Role</div>
+                    <div class="info-value">
+                        <span class="role-tag {{ user.role }}">
+                            <i class="bi bi-person-check"></i> {{ user.get_role_display }}
+                        </span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Department</div>
+                    <div class="info-value">{{ user.department|default:"—" }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Last Login</div>
+                    <div class="info-value">
+                        <i class="bi bi-clock-history"></i> {{ user.last_login|date:"F j, Y, g:i a"|default:"Never" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Card -->
+        <div class="stats-card">
+            <div class="stats-header">
+                <i class="bi bi-graph-up"></i>
+                <h3>Activity Overview</h3>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">{{ user.team_memberships.count }}</div>
+                    <div class="stat-label">Teams</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ user.sent_messages.count }}</div>
+                    <div class="stat-label">Messages Sent</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ user.received_messages.count }}</div>
+                    <div class="stat-label">Messages Received</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">{{ user.organised_meetings.count }}</div>
+                    <div class="stat-label">Meetings</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+/* Profile Page Styles */
+.profile-page {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Profile Header */
+.profile-header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 24px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.profile-avatar-large {
+    width: 96px;
+    height: 96px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.profile-header-info {
+    flex: 1;
+}
+
+.profile-header-info h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.profile-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(59,130,246,0.2);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #60a5fa;
+    margin-bottom: 12px;
+}
+
+.profile-join-date {
+    font-size: 13px;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.profile-join-date i {
+    margin-right: 6px;
+}
+
+.profile-header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-primary, .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-outline:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.5);
+}
+
+/* Profile Grid */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+/* Info Cards */
+.info-card, .stats-card {
+    background: var(--surface);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.card-header-custom, .stats-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 24px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.card-header-custom i, .stats-header i {
+    font-size: 18px;
+    color: var(--blue);
+}
+
+.card-header-custom h3, .stats-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-1);
+    margin: 0;
+}
+
+.card-body-custom {
+    padding: 20px 24px;
+}
+
+/* Info Rows */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-3);
+}
+
+.info-value {
+    font-size: 14px;
+    color: var(--text-1);
+    font-weight: 500;
+}
+
+.info-value i {
+    color: var(--text-3);
+    margin-right: 6px;
+}
+
+/* Role Tag */
+.role-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.role-tag.engineer {
+    background: var(--blue-light);
+    color: var(--blue);
+}
+
+.role-tag.team_leader {
+    background: var(--purple-bg);
+    color: var(--purple);
+}
+
+.role-tag.dept_leader {
+    background: var(--green-bg);
+    color: var(--green);
+}
+
+.role-tag.senior_manager {
+    background: var(--yellow-bg);
+    color: var(--yellow-text);
+}
+
+/* Stats Card */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 20px 24px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-3);
+    margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
 {% endblock %}

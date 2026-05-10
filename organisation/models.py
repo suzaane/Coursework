@@ -1,4 +1,5 @@
 from django.db import models
+# from teams.models import Team
 
 class Department(models.Model):
     """Represents a broadcast company department."""
@@ -15,7 +16,7 @@ class Department(models.Model):
         """Returns the number of teams in this department"""
         try:
             from teams.models import Team
-            return Team.objects.filter(department=self).count()
+            return Team.objects.filter(department=self.name).count()
         except ImportError:
             return 0
     
@@ -23,7 +24,7 @@ class Department(models.Model):
         """Returns all teams in this department"""
         try:
             from teams.models import Team
-            return Team.objects.filter(department=self)
+            return Team.objects.filter(department=self.name)
         except ImportError:
             return []
 
